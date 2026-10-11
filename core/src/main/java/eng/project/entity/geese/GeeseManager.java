@@ -1,7 +1,8 @@
-package eng.project.entity;
+package eng.project.entity.geese;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import eng.project.entity.thrown.ThrownItemManager;
 
 import java.util.ArrayList;
 
@@ -18,9 +19,10 @@ public class GeeseManager {
             geese.add(goose);
         }
     }
-    public void update(float delta){
+    public void update(float delta, float playerX, float playerY, ThrownItemManager thrownItemManager){
         for (Goose goose : geese){
-            goose.update(delta);
+            goose.target(playerX, playerY,delta,thrownItemManager);
+            goose.move(delta);
         }
     }
 

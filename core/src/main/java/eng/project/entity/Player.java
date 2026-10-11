@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Player {
     private final TextureRegion playerTexture;
-    private float x = 2f;
-    private float y = 2f;
-    private float speed = 2f;
+    private float x,y = 0;
+    private float speed = 3f;
     private float size = 1f;
 
     public Player(TextureRegion texture){

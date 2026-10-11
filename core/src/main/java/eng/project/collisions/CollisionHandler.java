@@ -1,6 +1,6 @@
 package eng.project.collisions;
 
-import eng.project.entity.Goose;
+import eng.project.entity.geese.Goose;
 import eng.project.entity.Player;
 
 import java.util.ArrayList;
@@ -56,8 +56,12 @@ public class CollisionHandler {
                     float overlap = minDistance - distance;
                     float normalX = dx / distance;
                     float normalY = dy / distance;
-                    a.push(-normalX * overlap * 0.5f, -normalY * overlap * 0.5f);
-                    b.push(normalX * overlap * 0.5f, normalY * overlap * 0.5f);
+
+                    // Help them become less rigid
+                    final float smooth = 0.3f;
+
+                    a.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                    b.push(normalX * overlap * 0.5f* smooth, normalY * overlap * 0.5f * smooth);
                 }
             }
         }

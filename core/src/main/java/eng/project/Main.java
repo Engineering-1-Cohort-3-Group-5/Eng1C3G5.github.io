@@ -20,6 +20,7 @@ public class Main extends ApplicationAdapter {
         assets.load("player.png", Texture.class);
         assets.load("map.png", Texture.class);
         assets.load("goose.png", Texture.class);
+        assets.load("food.png", Texture.class);
         assets.finishLoading();
 
         gameController = new GameController(assets);
@@ -38,5 +39,10 @@ public class Main extends ApplicationAdapter {
         // All libgdx graphics resources must be disposed to avoid memory leaks
         gameController.dispose();
         assets.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gameController.getCamera().resize(width,height);
     }
 }
