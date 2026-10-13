@@ -7,7 +7,7 @@ public class Food implements ThrownItem{
     private final TextureRegion foodTexture;
     private float x,y;
     private final float size = 1;
-    private float timer = 5; // how long food lives
+    private float timer = 5; // How long food lives
 
     public Food(TextureRegion texture,float x,float y){
         foodTexture = texture;

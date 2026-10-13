@@ -46,7 +46,6 @@ public class ThrownItemManager {
         return closest == null ? null : new FoodTarget(closest, closestDistance2);
     }
 
-
     public void render(SpriteBatch batch){
         for (ThrownItem item : thrownItems) {
             item.render(batch);
