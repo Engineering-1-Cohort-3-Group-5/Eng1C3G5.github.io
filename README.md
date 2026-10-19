@@ -1,6 +1,6 @@
 Engineering 1 Cohort 3 Group 5
 
-Requirements:
+Requirements: https://docs.google.com/document/d/1yeaoK_1mfQn3LMuJTKoRhyuUO1CuMTIVL0JHH_UibGg/edit?usp=sharing
 
 Architecture:
 
