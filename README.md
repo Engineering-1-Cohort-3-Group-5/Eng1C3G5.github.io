@@ -11,3 +11,8 @@ Implementation:
 Executable:
 
 Repository: https://github.com/Engineering-1-Cohort-3-Group-5/Eng1C3G5.github.io/tree/main
+
+
+
+Additional Material
+<img width="508" height="124" alt="image" src="https://github.com/user-attachments/assets/239f173b-36b6-45a5-8813-d8cbf6abe422" />
