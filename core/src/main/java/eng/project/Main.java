@@ -21,6 +21,7 @@ public class Main extends ApplicationAdapter {
         assets.load("map.png", Texture.class);
         assets.load("goose.png", Texture.class);
         assets.load("food.png", Texture.class);
+        assets.load("building.png", Texture.class);
         assets.finishLoading();
 
         gameController = new GameController(assets);

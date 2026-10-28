@@ -1,9 +1,10 @@
-package eng.project.entity.thrown;
+package eng.project.entity.food;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Food implements ThrownItem{
+/** A temporary food item that geese can use as a movement target. */
+public class Food {
     private final TextureRegion foodTexture;
     private float x,y;
     private final float size = 1;
@@ -15,27 +16,22 @@ public class Food implements ThrownItem{
         this.y = y;
     }
 
-    @Override
+    /** Counts down the item's lifetime. */
     public void update(float delta) {
         timer -= delta;
     }
-    @Override
     public void render(SpriteBatch batch) {
         batch.draw(foodTexture, x - size / 2f, y - size / 2f, size, size);
     }
-    @Override
     public float getX() {
         return x;
     }
-    @Override
     public float getY() {
         return y;
     }
-    @Override
     public float getSize() {
         return size;
     }
-    @Override
     public boolean isFinished() {
         return timer <= 0;
     }

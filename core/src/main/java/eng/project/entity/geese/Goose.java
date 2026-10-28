@@ -3,28 +3,37 @@ package eng.project.entity.geese;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Null;
-import eng.project.entity.thrown.Food;
-import eng.project.entity.thrown.FoodTarget;
-import eng.project.entity.thrown.ThrownItemManager;
+import eng.project.collisions.Circle;
+import eng.project.collisions.ColliderBody;
+import eng.project.collisions.CollisionHandler;
+import eng.project.entity.food.Food;
+import eng.project.entity.food.FoodTarget;
+import eng.project.entity.food.FoodManager;
 
+/**
+ * A moving goose whose simple state machine chooses food before chasing a nearby player.
+ * Add future behaviours by extending {@link GooseState} and this target-selection method.
+ */
 public class Goose {
     private final TextureRegion gooseTexture;  // Having each goose store its own texture could allow for variations in how geese appear
-    private float x,y,rotation,targetX,targetY,reTargetTimer;
+    private float rotation,targetX,targetY,reTargetTimer;
+    private ColliderBody body;
     private final float speed, size,sightDistance2;
     private GooseState state = GooseState.Idle;
 
-    public Goose(float spawnX, float spawnY, TextureRegion texture){
-        gooseTexture = texture;
-        x = spawnX;
-        y = spawnY;
-
+    /** Creates a goose with randomized visual size, movement speed, and sight range. */
+    public Goose(float spawnX, float spawnY, TextureRegion texture, CollisionHandler collisionHandler){
         // Add some random variation to their stats
         speed = MathUtils.random(0.5f, 2.5f);
         size = MathUtils.random(0.8f, 1.2f);
-        sightDistance2 = MathUtils.random(16f, 49f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
+        sightDistance2 = MathUtils.random(36f, 81f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
+
+        gooseTexture = texture;
+        body = new ColliderBody(spawnX,spawnY,false, new Circle(size/2f));
+        collisionHandler.add(body);
     }
-    public void target(float playerX, float playerY, float delta, ThrownItemManager thrownItemManager){
+    /** Periodically selects the highest-priority visible target. */
+    public void target(float playerX, float playerY, float delta, FoodManager foodManager){
         if (reTargetTimer > 0){
             reTargetTimer -= delta; // Tick the timer down to 0
 
@@ -36,7 +45,7 @@ public class Goose {
         else{
             reTargetTimer = 0.5f; // How often the goose checks for a new target
 
-            FoodTarget closestFood = thrownItemManager.findClosestFood(x,y); // Get nearest food
+            FoodTarget closestFood = foodManager.findClosestFood(body.getX(), body.getY()); // Get nearest food
 
             if (closestFood != null && closestFood.distance2() <= sightDistance2){ // If food exists and is within sight
                 Food food = closestFood.food();
@@ -47,8 +56,8 @@ public class Goose {
                 return;
             }
             else{
-                float dx = playerX - x;
-                float dy = playerY - y;
+                float dx = playerX - body.getX();
+                float dy = playerY - body.getY();
                 if (dx*dx + dy*dy <= sightDistance2){ // If player within sight
                     // Set target as player
                     state = GooseState.ChasingPlayer;
@@ -62,11 +71,12 @@ public class Goose {
         }
     }
 
+    /** Moves towards the current target without overshooting it. */
     public void move(float delta){
         if (state != GooseState.Idle) {
             // Get dist
-            float dx = targetX - x;
-            float dy = targetY - y;
+            float dx = targetX - body.getX();
+            float dy = targetY - body.getY();
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
             // Return if already touching
@@ -74,8 +84,7 @@ public class Goose {
 
             // Move toward target without overshooting
             float step = Math.min(speed * delta, distance);
-            x += dx / distance * step;
-            y += dy / distance * step;
+            body.push(dx / distance * step,dy / distance * step);
 
             // Calculate angle in degrees (plus offset to line up sprite)
             rotation = -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
@@ -85,7 +94,7 @@ public class Goose {
     public void render(SpriteBatch batch){
         batch.draw(
             gooseTexture,
-            x - size / 2f, y - size / 2f,
+            body.getX() - size / 2f, body.getY() - size / 2f,
             size / 2f, size / 2f,
             size, size,
             1f, 1f,
@@ -93,7 +102,7 @@ public class Goose {
         );
     }
 
-    public void push(float dx, float dy){
+/*    public void push(float dx, float dy){
         x += dx;
         y += dy;
     }
@@ -104,7 +113,7 @@ public class Goose {
 
     public float getY() {
         return y;
-    }
+    }*/
 
     public float getRadius(){
         return size/2f;

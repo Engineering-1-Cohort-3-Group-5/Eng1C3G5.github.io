@@ -5,20 +5,27 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import eng.project.collisions.Circle;
+import eng.project.collisions.ColliderBody;
+import eng.project.collisions.CollisionHandler;
 
+/** Player-controlled circular entity. Input is sampled in {@link #update(float)}. */
 public class Player {
     private final TextureRegion playerTexture;
-    private float x,y = 0;
+    private ColliderBody body;
     private float speed = 3f;
     private float size = 1f;
 
-    public Player(TextureRegion texture){
+    /** Creates the player at the world origin and registers its collider. */
+    public Player(TextureRegion texture, CollisionHandler collisionHandler){
+        body = new ColliderBody(0,0,false,new Circle(0.6f));
+        collisionHandler.add(body);
         playerTexture = texture;
     }
 
+    /** Reads WASD input and moves at a consistent speed in every direction. */
     public void update(float delta) {
         // Get input direction
-
         float dx = 0f;
         float dy = 0f;
 
@@ -32,25 +39,17 @@ public class Player {
         float length = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (length > 0f) {
-            x += (dx / length) * speed * delta;
-            y += (dy / length) * speed * delta;
+            body.push((dx / length) * speed * delta,(dy / length) * speed * delta);
         }
     }
     public void render(SpriteBatch batch){
         // Centred around x and y
-        batch.draw(playerTexture,x-size/2f, y-size/2f, size, size);
+        batch.draw(playerTexture,body.getX()-size/2f, body.getY()-size/2f, size, size);
     }
     public float getX() {
-        return x;
+        return body.getX();
     }
     public float getY() {
-        return y;
-    }
-    public float getRadius(){
-        return size/2f;
-    }
-    public void push(float dx, float dy){
-        x += dx;
-        y += dy;
+        return body.getY();
     }
 }
