@@ -9,10 +9,12 @@ import java.util.ArrayList;
 public class ColliderBody {
     private Shape shape;
     private boolean isTrigger;
-    private ArrayList<ColliderBody> others = new ArrayList<>();
+    private ArrayList<Object> others = new ArrayList<>();
+    private Object owner;
     private float x,y;
     /** Creates a body at the supplied world position. Trigger behaviour is reserved for future event handling. */
-    public ColliderBody(float x, float y,boolean isTrigger,Shape shape){
+    public ColliderBody(Object owner,float x, float y,boolean isTrigger,Shape shape){
+        this.owner = owner;
         this.isTrigger = isTrigger;
         this.x = x;
         this.y = y;
@@ -26,17 +28,18 @@ public class ColliderBody {
     public boolean isTrigger(){
         return isTrigger;
     }
-    /** Returns true if another collider overlaps with it*/
-    public boolean isHit() {
-        return !others.isEmpty();
-    }
+
     /** Adds a collider to this colliders list of colliding colliders*/
     public void touching(ColliderBody other){
-        others.add(other);
+        others.add(other.owner);
     }
     /** Sets the colliders hit marker to false*/
-    public void resetHit(){
+    public void resetTouching(){
         others.clear();
+    }
+
+    public ArrayList<Object> getTouching(){
+        return this.others;
     }
 
     public float getX() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
+import eng.project.entity.geese.Goose;
 
 /** Player-controlled circular entity. Input is sampled in {@link #update(float)}. */
 public class Player {
@@ -18,7 +19,7 @@ public class Player {
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
-        body = new ColliderBody(0,0,false,new Circle(0.6f));
+        body = new ColliderBody(this,0,0,false,new Circle(0.6f));
         collisionHandler.add(body);
         playerTexture = texture;
     }

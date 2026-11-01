@@ -17,15 +17,16 @@ public class CollisionHandler {
     public void remove(ColliderBody collider){
         colliders.remove(collider);
     }
+
     /** Checks each unordered pair once and separates pairs that overlap. */
     public void resolveCollisions(){
         for (int i = 0; i < colliders.size(); i++){
             ColliderBody a = colliders.get(i);
-            a.resetHit();
+            a.resetTouching();
 
             for (int j = i + 1; j < colliders.size(); j++){ // Avoid double-checking and checking against self
                 ColliderBody b = colliders.get(j);
-                b.resetHit();
+                b.resetTouching();
 
                 resolveCollision(a,b);
             }
