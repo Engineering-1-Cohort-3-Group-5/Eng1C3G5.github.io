@@ -21,9 +21,11 @@ public class CollisionHandler {
     public void resolveCollisions(){
         for (int i = 0; i < colliders.size(); i++){
             ColliderBody a = colliders.get(i);
+            a.resetHit();
 
             for (int j = i + 1; j < colliders.size(); j++){ // Avoid double-checking and checking against self
                 ColliderBody b = colliders.get(j);
+                b.resetHit();
 
                 resolveCollision(a,b);
             }
@@ -62,40 +64,50 @@ public class CollisionHandler {
         if (distanceSquared > 0f) {
             float distance = (float) Math.sqrt(distanceSquared);
             if (distance < circle.radius()) {
-                // The normal points from the closest box point towards the circle centre.
-                float penetration = circle.radius() - distance;
-                circleCollider.push(dx / distance * penetration, dy / distance * penetration);
+                boxCollider.touching(circleCollider);
+                circleCollider.touching(boxCollider);
+
+                if(!boxCollider.isTrigger() && !circleCollider.isTrigger()){
+                    // The normal points from the closest box point towards the circle centre.
+                    float penetration = circle.radius() - distance;
+                    circleCollider.push(dx / distance * penetration, dy / distance * penetration);
+                }
             }
-            return;
         }
+        else {
+            // A zero distance means the centre is inside (or exactly on) the box. Move it
+            // through the nearest face; the radius must clear that face as well.
+            boxCollider.touching(circleCollider);
+            circleCollider.touching(boxCollider);
 
-        // A zero distance means the centre is inside (or exactly on) the box. Move it
-        // through the nearest face; the radius must clear that face as well.
-        float toLeft = circleCollider.getX() - boxLeft;
-        float toRight = boxRight - circleCollider.getX();
-        float toBottom = circleCollider.getY() - boxBottom;
-        float toTop = boxTop - circleCollider.getY();
+            if(!boxCollider.isTrigger() && !circleCollider.isTrigger()) {
+                float toLeft = circleCollider.getX() - boxLeft;
+                float toRight = boxRight - circleCollider.getX();
+                float toBottom = circleCollider.getY() - boxBottom;
+                float toTop = boxTop - circleCollider.getY();
 
-        float nearestFaceDistance = toLeft;
-        float normalX = -1f;
-        float normalY = 0f;
-        if (toRight < nearestFaceDistance) {
-            nearestFaceDistance = toRight;
-            normalX = 1f;
-            normalY = 0f;
+                float nearestFaceDistance = toLeft;
+                float normalX = -1f;
+                float normalY = 0f;
+                if (toRight < nearestFaceDistance) {
+                    nearestFaceDistance = toRight;
+                    normalX = 1f;
+                    normalY = 0f;
+                }
+                if (toBottom < nearestFaceDistance) {
+                    nearestFaceDistance = toBottom;
+                    normalX = 0f;
+                    normalY = -1f;
+                }
+                if (toTop < nearestFaceDistance) {
+                    nearestFaceDistance = toTop;
+                    normalX = 0f;
+                    normalY = 1f;
+                }
+                circleCollider.push(normalX * (nearestFaceDistance + circle.radius()),
+                    normalY * (nearestFaceDistance + circle.radius()));
+            }
         }
-        if (toBottom < nearestFaceDistance) {
-            nearestFaceDistance = toBottom;
-            normalX = 0f;
-            normalY = -1f;
-        }
-        if (toTop < nearestFaceDistance) {
-            nearestFaceDistance = toTop;
-            normalX = 0f;
-            normalY = 1f;
-        }
-        circleCollider.push(normalX * (nearestFaceDistance + circle.radius()),
-            normalY * (nearestFaceDistance + circle.radius()));
     }
     private void boxBox(ColliderBody colliderA, Box boxA, ColliderBody colliderB, Box boxB){
         float dx = colliderA.getX() - colliderB.getX();
@@ -109,17 +121,22 @@ public class CollisionHandler {
             return;
         }
 
-        // Resolve on the axis requiring the least movement.
-        if (overlapX < overlapY) {
-            float pushX = (dx < 0f ? -overlapX : overlapX) / 2f;
+        colliderA.touching(colliderB);
+        colliderB.touching(colliderA);
 
-            colliderA.push(pushX, 0f);
-            colliderB.push(-pushX, 0f);
-        } else {
-            float pushY = (dy < 0f ? -overlapY : overlapY) / 2f;
+        if(!colliderA.isTrigger() && !colliderB.isTrigger()) {
+            // Resolve on the axis requiring the least movement.
+            if (overlapX < overlapY) {
+                float pushX = (dx < 0f ? -overlapX : overlapX) / 2f;
 
-            colliderA.push(0f, pushY);
-            colliderB.push(0f, -pushY);
+                colliderA.push(pushX, 0f);
+                colliderB.push(-pushX, 0f);
+            } else {
+                float pushY = (dy < 0f ? -overlapY : overlapY) / 2f;
+
+                colliderA.push(0f, pushY);
+                colliderB.push(0f, -pushY);
+            }
         }
     }
     private void circleCircle(ColliderBody colliderA, Circle circleA, ColliderBody colliderB, Circle circleB) {
@@ -129,28 +146,32 @@ public class CollisionHandler {
         float distanceSquared = dx*dx + dy*dy;
         float combinedRadius = circleA.radius() + circleB.radius();
 
-        // If circles overlap
         if (distanceSquared < combinedRadius * combinedRadius){
-            float distance = (float) Math.sqrt(distanceSquared); // Only calculate inside if-statement to avoid redundant maths
+            colliderA.touching(colliderB);
+            colliderB.touching(colliderA);
 
-            // Pick a stable direction if the centers are exactly coincident.
-            if (distance < 0.0001f) {
-                dx = 1f;
-                dy = 0f;
-                distance = 1f;
+            if(!colliderA.isTrigger() && !colliderB.isTrigger()) {
+                float distance = (float) Math.sqrt(distanceSquared); // Only calculate inside if-statement to avoid redundant maths
+
+                // Pick a stable direction if the centers are exactly coincident.
+                if (distance < 0.0001f) {
+                    dx = 1f;
+                    dy = 0f;
+                    distance = 1f;
+                }
+
+                // Calculate the direction and magnitude of the overlap
+                float overlap = combinedRadius - distance;
+                float normalX = dx / distance;
+                float normalY = dy / distance;
+
+                // Help them become less rigid
+                final float smooth = 0.3f;
+
+                // Push apart
+                colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
             }
-
-            // Calculate the direction and magnitude of the overlap
-            float overlap = combinedRadius - distance;
-            float normalX = dx / distance;
-            float normalY = dy / distance;
-
-            // Help them become less rigid
-            final float smooth = 0.3f;
-
-            // Push apart
-            colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-            colliderB.push(normalX * overlap * 0.5f* smooth, normalY * overlap * 0.5f * smooth);
         }
     }
 }
