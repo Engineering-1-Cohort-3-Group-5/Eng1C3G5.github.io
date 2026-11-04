@@ -2,7 +2,7 @@
 
 Requirements: https://docs.google.com/document/d/1yeaoK_1mfQn3LMuJTKoRhyuUO1CuMTIVL0JHH_UibGg/edit?usp=sharing
 
-Architecture:
+Architecture: https://docs.google.com/document/d/1TzoM5JcSVfVxfLRR8gTkypFC0vH2wr5XmEeu74xXAIM/edit?usp=sharing
 
 Planning:
 
