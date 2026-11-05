@@ -35,4 +35,12 @@ public class Map {
             feature.render(batch);
         }
     }
+
+    public float getWidth(){
+        return width;
+    }
+
+    public float getHeight(){
+        return height;
+    }
 }
