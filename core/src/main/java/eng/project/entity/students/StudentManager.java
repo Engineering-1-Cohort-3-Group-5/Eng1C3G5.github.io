@@ -40,3 +40,5 @@ public class StudentManager {
     }
 
 }
+
+//spawn every 3 seconds for a period of 30 seconds

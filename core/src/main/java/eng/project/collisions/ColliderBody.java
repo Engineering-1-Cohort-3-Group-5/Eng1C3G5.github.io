@@ -12,8 +12,9 @@ public class ColliderBody {
     private ArrayList<Object> others = new ArrayList<>();
     private Object owner;
     private float x,y;
+
     /** Creates a body at the supplied world position. Trigger behaviour is reserved for future event handling. */
-    public ColliderBody(Object owner,float x, float y,boolean isTrigger,Shape shape){
+    public ColliderBody(Object owner, float x, float y, boolean isTrigger, Shape shape){
         this.owner = owner;
         this.isTrigger = isTrigger;
         this.x = x;

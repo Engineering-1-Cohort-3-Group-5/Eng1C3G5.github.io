@@ -9,6 +9,7 @@ import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
 import eng.project.entity.geese.Goose;
+import eng.project.world.Map;
 
 /** Player-controlled circular entity. Input is sampled in {@link #update(float)}. */
 public class Player {
@@ -30,10 +31,10 @@ public class Player {
         float dx = 0f;
         float dy = 0f;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) dx--;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) dx++;
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) dy--;
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) dy++;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)&&getX() > (-Map.getWidth()/2f)) dx--;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&getX() < (Map.getWidth()/2f)) dx++;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)&&getY() > (-Map.getHeight()/2f)) dy--;
+        if (Gdx.input.isKeyPressed(Input.Keys.W)&&getY() < Map.getHeight()/2f) dy++;
 
         // Move in normalised direction
 

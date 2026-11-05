@@ -10,8 +10,8 @@ import java.util.ArrayList;
 /** Renders the map background and declares the current static world features. */
 public class Map {
     private final TextureRegion mapTexture;
-    private final float width = 40f;
-    private final float height = 40f;
+    private static final float width = 40f;
+    private static final float height = 40f;
     private final ArrayList<Feature> mapFeatures = new ArrayList<>();
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(TextureRegion mapTexture,TextureRegion buildingTexture, CollisionHandler collisionHandler){
@@ -36,11 +36,11 @@ public class Map {
         }
     }
 
-    public float getWidth(){
+    public static float getWidth(){
         return width;
     }
 
-    public float getHeight(){
+    public static float getHeight(){
         return height;
     }
 }

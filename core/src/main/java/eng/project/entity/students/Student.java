@@ -21,12 +21,12 @@ public class Student {
     /** Creates a goose with randomized visual size, movement speed, and sight range. */
     public Student(float spawnX, float spawnY, TextureRegion texture, CollisionHandler collisionHandler){
         // Add some random variation to their stats
-        speed = MathUtils.random(0.5f, 2.5f);
-        size = MathUtils.random(0.8f, 1.2f);
+        speed = 0.5f;
+        size = 1f;
         sightDistance2 = MathUtils.random(36f, 81f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
 
         studentTexture = texture;
-        body = new ColliderBody(this,spawnX,spawnY,false, new Circle(size/2f));
+        body = new ColliderBody(this,spawnX,spawnY,true, new Circle(size/2f));
         collisionHandler.add(body);
     }
     /** Periodically selects the highest-priority visible target. */
