@@ -2,6 +2,7 @@ package eng.project.world;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
 
@@ -12,7 +13,8 @@ public class Map {
     private final TextureRegion mapTexture;
     private static final float width = 40f;
     private static final float height = 40f;
-    private final ArrayList<Feature> mapFeatures = new ArrayList<>();
+    private static final ArrayList<Feature> mapFeatures =
+        new ArrayList<>();
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(TextureRegion mapTexture,TextureRegion buildingTexture, CollisionHandler collisionHandler){
         this.mapTexture = mapTexture;
@@ -42,5 +44,12 @@ public class Map {
 
     public static float getHeight(){
         return height;
+    }
+
+    public static Feature getOneMapFeature(){
+        int numFeatures = mapFeatures.size();
+        int index = MathUtils.random(0, numFeatures);
+
+        return mapFeatures.get(index);
     }
 }

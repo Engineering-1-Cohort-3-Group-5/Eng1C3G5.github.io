@@ -2,43 +2,67 @@ package eng.project.entity.students;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.food.FoodManager;
+import eng.project.world.Feature;
+import eng.project.world.Map;
 
 import java.util.ArrayList;
 
 public class StudentManager {
 
-    private ArrayList<Student> students = new ArrayList<Student>();
-
     private final TextureRegion studentTexture;
+    private final Feature building = Map.getOneMapFeature();
+    private final float x = building.getX() + building.getHalfWidth();
+    private final float y = building.getY() + building.getHalfHeight();
 
-    /** Creates the initial flock and registers every goose collider. */
-    public StudentManager(TextureRegion texture, CollisionHandler collisionHandler){
+
+    private final ArrayList<Student> students = new ArrayList<Student>();
+
+    /**
+     * Creates the initial flock and registers every goose collider.
+     */
+    public StudentManager(TextureRegion texture,
+                          CollisionHandler collisionHandler) {
+
         studentTexture = texture;
+        int spawnTimer = 30;
 
-        for (int i = 0; i < 30; i++){
-            Student student = new Student(10-i,10-i,studentTexture,collisionHandler);
+        while (spawnTimer > 0) {
+            Student student = new Student(x, y, studentTexture,
+                collisionHandler);
             students.add(student);
+            spawnTimer -= 3;
         }
     }
-    public void update(float delta, float playerX, float playerY, FoodManager foodManager){
-        for (Student student : students){
-            student.target(playerX, playerY,delta,foodManager);
+
+    public void target(){
+        //TODO: generate coordinates on border for students to aim for
+
+    }
+
+    public void update(float delta) {
+        for (Student student : students) {
             student.move(delta);
         }
     }
+    /**
+     * Removes the student from the game once it reaches designated
+     * coordinates.
+     *
+     */
+    public void remove(){
+        //TODO
+    }
 
-    public void render(SpriteBatch batch){
-        for (Student student : students){
+    public void render(SpriteBatch batch) {
+        for (Student student : students) {
             student.render(batch);
         }
     }
 
-    public ArrayList<Student> getGeese(){
+    public ArrayList<Student> getStudents() {
         return students;
     }
 
 }
-
-//spawn every 3 seconds for a period of 30 seconds

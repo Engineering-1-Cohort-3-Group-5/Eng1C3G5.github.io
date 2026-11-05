@@ -23,4 +23,36 @@ public class Feature {
             batch.draw(texture,body.getX()-box.halfWidth(),body.getY()-box.halfHeight(),box.halfWidth() * 2,box.halfHeight()*2);
         }
     }
+
+    public float getX(){
+        return body.getX();
+    }
+
+    public float getY(){
+        return body.getY();
+    }
+
+    public float getHalfWidth(){
+        Shape shape = body.getShape();
+
+        if (shape instanceof Box box) {
+            return box.halfWidth();
+        }
+        else if (shape instanceof Circle circle) {
+            return circle.radius();
+        }
+        return 0f;
+    }
+
+    public float getHalfHeight(){
+        Shape shape = body.getShape();
+
+        if (shape instanceof Box box) {
+            return box.halfHeight();
+        }
+        else if (shape instanceof Circle circle) {
+            return circle.radius();
+        }
+        return 0f;
+    }
 }
