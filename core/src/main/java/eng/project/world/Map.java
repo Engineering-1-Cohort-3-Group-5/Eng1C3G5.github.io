@@ -47,9 +47,10 @@ public class Map {
     }
 
     public static Feature getOneMapFeature(){
-        int numFeatures = mapFeatures.size();
-        int index = MathUtils.random(0, numFeatures);
-
+        if (mapFeatures.isEmpty()){
+            return null;
+        }
+        int index = MathUtils.random(mapFeatures.size() - 1);
         return mapFeatures.get(index);
     }
 }

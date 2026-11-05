@@ -38,6 +38,8 @@ public class StudentManager {
 
     public void target(){
         //TODO: generate coordinates on border for students to aim for
+        float targetX;
+        float targetY;
 
     }
 

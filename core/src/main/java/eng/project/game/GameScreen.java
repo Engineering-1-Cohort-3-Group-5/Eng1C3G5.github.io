@@ -13,6 +13,7 @@ import eng.project.collisions.CollisionHandler;
 import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
+import eng.project.entity.students.StudentManager;
 import eng.project.inventory.Inventory;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
@@ -28,6 +29,7 @@ public class GameScreen extends ScreenAdapter {
     private final Player player;
     private final Map map;
     private final GeeseManager geeseManager;
+    private final StudentManager studentManager;
     private final FoodManager foodManager;
     private final Gui gui = new Gui();
     private final Inventory inventory = new Inventory();
@@ -42,6 +44,10 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
         map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        studentManager =
+            new StudentManager(new TextureRegion(assets.get(
+                "student" +
+                    ".png", Texture.class)), collisionHandler);
     }
 
     /** Updates and draws this screen once per frame. */
@@ -80,6 +86,7 @@ public class GameScreen extends ScreenAdapter {
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager);
+                studentManager.update(delta);
                 collisionHandler.resolveCollisions();
                 camera.update(player.getX(), player.getY());
             }
@@ -98,6 +105,7 @@ public class GameScreen extends ScreenAdapter {
         map.render(batch);
         foodManager.render(batch);
         geeseManager.render(batch);
+        studentManager.render(batch);
         player.render(batch);
         gui.render(batch);
 
