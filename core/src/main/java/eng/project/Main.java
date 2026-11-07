@@ -16,11 +16,15 @@ public class Main extends com.badlogic.gdx.Game {
 
         // Load textures shared by game screens.
         assets.load("player.png", Texture.class);
-        assets.load("map.png", Texture.class);
         assets.load("goose.png", Texture.class);
         assets.load("food.png", Texture.class);
-        assets.load("building.png", Texture.class);
         assets.load("student.png", Texture.class);
+
+        assets.load("world/map.png", Texture.class);
+        assets.load("world/bushes.png", Texture.class);
+        assets.load("world/buildings.png", Texture.class);
+        assets.load("world/border.png", Texture.class);
+
         assets.finishLoading();
 
         showMainMenu();

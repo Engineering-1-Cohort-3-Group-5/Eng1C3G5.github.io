@@ -40,14 +40,14 @@ public class GameScreen extends ScreenAdapter {
         // TextureRegion is used so that sprite atlases can later be used.
         player = new Player(new TextureRegion(assets.get("player.png", Texture.class)), collisionHandler);
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
-        map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
+        map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
     }
 
     /** Updates and draws this screen once per frame. */
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0.3f, 0.5f, 0.3f, 1f);
         if (handleInput()) {
             return;
         }
@@ -95,10 +95,11 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
 
         // A paused game still shows the current world behind its future pause UI.
-        map.render(batch);
+        map.render_back(batch);
         foodManager.render(batch);
         geeseManager.render(batch);
         player.render(batch);
+        map.render_front(batch);
         gui.render(batch);
 
         batch.end();
