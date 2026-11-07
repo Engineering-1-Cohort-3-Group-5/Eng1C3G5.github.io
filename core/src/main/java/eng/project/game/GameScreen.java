@@ -116,12 +116,15 @@ public class GameScreen extends ScreenAdapter {
 
     private void handleInventoryInput() {
         for (int i = 0; i < Inventory.size; i++) {
-            if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + 1))) {
+            if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + i))) {
                 inventory.select(i);
             }
         }
         if (Gdx.input.isKeyJustPressed((Input.Keys.E))) {
             inventory.useSelected();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+            player.damage(10f); // H to damage just for testing
         }
     }
 
@@ -137,7 +140,7 @@ public class GameScreen extends ScreenAdapter {
         player.render(batch);
         map.render_front(batch);
         batch.end();
-        gui.render(batch, inventory);
+        gui.render(batch, inventory, player);
     }
 
     /** Stops simulation updates while keeping the world visible. */
@@ -158,7 +161,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.resize(width, height);
-        gui.reszie(width, height);
+        gui.resize(width, height);
     }
 
     /** Releases rendering resources owned by this screen. */

@@ -18,6 +18,14 @@ public class Player {
     private float speed = 3;
     private float size = 1f;
 
+    private final float sprintMultiplier = 1.8f;
+    private final float staminaDrainPerSecond = 30f;
+    private final float staminaRegenPerSecond = 15f;
+    private final float maxHealth = 100f;
+    private float health = maxHealth;
+    private final float maxStamina = 100f;
+    private float stamina = maxStamina;
+
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
         body = new ColliderBody(this,-30,-30,false,new Circle(0.4f));
@@ -40,18 +48,62 @@ public class Player {
 
         float length = (float) Math.sqrt(dx * dx + dy * dy);
 
-        if (length > 0f) {
-            body.push((dx / length) * speed * delta,(dy / length) * speed * delta);
+        boolean moving = length > 0f;
+        boolean sprinting = moving && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && stamina > 0f;
+        updateStamina(delta, sprinting);
+        if (moving) {
+            float currentSpeed = sprinting ? speed * sprintMultiplier : speed;
+            body.push((dx / length) * currentSpeed * delta, (dy / length) * currentSpeed * delta);
         }
     }
+
+    public void updateStamina(float delta, boolean sprinting) {
+        if (sprinting) {
+            stamina -= staminaDrainPerSecond * delta;
+        } else {
+            stamina += staminaRegenPerSecond * delta;
+        }
+        stamina = Math.max(0f, Math.min(maxStamina, stamina));
+    }
+
+    public void damage(float amount) {
+        health = Math.max(0f, health - amount);
+    }
+
+    public void heal(float amount) {
+        health = Math.min(maxHealth, health + amount);
+    }
+
+    public boolean isDead() {
+        return health <= 0f;
+    }
+
     public void render(SpriteBatch batch){
-        // Centred around x and y
+      // Centred around x and y
         batch.draw(playerTexture,body.getX()-size/2f, body.getY()-size/2f, size, size);
     }
+
     public float getX() {
         return body.getX();
     }
+
     public float getY() {
         return body.getY();
+    }
+
+    public float getHealth() {
+        return health;
+    }
+
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+
+    public float getStamina() {
+        return stamina;
+    }
+
+    public float getMaxStamina() {
+        return maxStamina;
     }
 }
