@@ -16,6 +16,8 @@ import eng.project.entity.geese.GeeseManager;
 import eng.project.inventory.Inventory;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
+import com.badlogic.gdx.InputAdapter;
+import eng.project.inventory.Item;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -42,6 +44,28 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean scrolled(float amountX, float amountY) {
+                inventory.scroll((int) Math.signum(amountY));
+                return true;
+            }
+        });
+
+        TextureRegion testIcon = new TextureRegion(assets.get("food.png", Texture.class));
+        for (int i = 0; i < 3; i++) {
+            inventory.add(createTestItem(testIcon));
+        }
+    }
+
+    private Item createTestItem(TextureRegion icon) {
+        return new Item("Test", icon) {
+            @Override
+            public boolean use() {
+                return true;
+            }
+        };
     }
 
     /** Updates and draws this screen once per frame. */
@@ -77,6 +101,7 @@ public class GameScreen extends ScreenAdapter {
     private void update(float delta) {
         switch (state) {
             case Play -> {
+                handleInventoryInput();
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
@@ -86,6 +111,17 @@ public class GameScreen extends ScreenAdapter {
             case Pause -> {
                 // Pause-menu input will be handled here when it is implemented.
             }
+        }
+    }
+
+    private void handleInventoryInput() {
+        for (int i = 0; i < Inventory.size; i++) {
+            if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + 1))) {
+                inventory.select(i);
+            }
+        }
+        if (Gdx.input.isKeyJustPressed((Input.Keys.E))) {
+            inventory.useSelected();
         }
     }
 
@@ -100,9 +136,8 @@ public class GameScreen extends ScreenAdapter {
         geeseManager.render(batch);
         player.render(batch);
         map.render_front(batch);
-        gui.render(batch);
-
         batch.end();
+        gui.render(batch, inventory);
     }
 
     /** Stops simulation updates while keeping the world visible. */
@@ -123,6 +158,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.resize(width, height);
+        gui.reszie(width, height);
     }
 
     /** Releases rendering resources owned by this screen. */
@@ -130,5 +166,6 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
         // Textures are disposed by AssetManager in Main.
         batch.dispose();
+        gui.dispose();
     }
 }
