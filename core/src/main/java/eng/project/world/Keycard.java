@@ -1,10 +1,11 @@
-package eng.project.entity;
+package eng.project.world;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
+import eng.project.entity.Player;
 
 
 public class Keycard {
@@ -16,7 +17,7 @@ public class Keycard {
 
     public Keycard(TextureRegion texture, CollisionHandler collisionHandler){
         this.texture = texture;
-        pickupTrigger = new ColliderBody(this,-30,-25,true,new Circle(0.5f));
+        pickupTrigger = new ColliderBody(this,30,25,true,new Circle(0.5f));
         collisionHandler.add(pickupTrigger);
     }
 

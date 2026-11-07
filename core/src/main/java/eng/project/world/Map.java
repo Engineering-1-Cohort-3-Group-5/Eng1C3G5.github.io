@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import eng.project.Main;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
 
@@ -85,8 +86,8 @@ public class Map {
         }
     }
 
-    public void update(){
-        bus.update();
+    public void update(Main application){
+        bus.update(application);
     }
 
     public void render_back(SpriteBatch batch){

@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import eng.project.Main;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.Keycard;
+import eng.project.world.Keycard;
 import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
@@ -84,7 +84,7 @@ public class GameScreen extends ScreenAdapter {
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
                 player.update(delta);
                 keycard.update();
-                map.update();
+                map.update(application);
                 collisionHandler.resolveCollisions();
                 camera.update(player.getX(), player.getY());
             }

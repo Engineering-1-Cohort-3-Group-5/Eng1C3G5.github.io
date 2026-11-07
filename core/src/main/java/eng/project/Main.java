@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import eng.project.game.GameScreen;
 import eng.project.ui.MainMenuScreen;
+import eng.project.ui.VictoryScreen;
 
 /** Application entry point shared by all platforms and owner of screen navigation. */
 public class Main extends com.badlogic.gdx.Game {
@@ -40,6 +41,9 @@ public class Main extends com.badlogic.gdx.Game {
     /** Returns to the main menu. */
     public void showMainMenu() {
         changeScreen(new MainMenuScreen(this));
+    }
+    public void showVictoryScreen() {
+        changeScreen(new VictoryScreen(this));
     }
 
     /** Replaces and disposes the current screen, which prevents abandoned game screens leaking resources. */

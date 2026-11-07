@@ -3,6 +3,7 @@ package eng.project.world;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import eng.project.Main;
 import eng.project.collisions.*;
 import eng.project.entity.Player;
 
@@ -24,14 +25,14 @@ public class Bus {
             width, height
         );
     }
-    public void update(){
+    public void update(Main application){
         for (Object other: body.getTouching()){
             if (other instanceof Player){
                 if(((Player) other).hasKeycard()){
-                    System.out.println("gg");
+                    application.showVictoryScreen();
                 }
                 else{
-                    System.out.println("need keycard");
+                    // Need keycard
                 }
             }
         }
