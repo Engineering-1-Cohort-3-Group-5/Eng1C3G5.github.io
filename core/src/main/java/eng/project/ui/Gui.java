@@ -11,6 +11,7 @@ import eng.project.inventory.Inventory;
 import eng.project.inventory.ItemStack;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import eng.project.entity.Player;
+import com.badlogic.gdx.Gdx;
 
 /** Entry point for screen-space UI; add HUD elements here as the game expands. */
 public class Gui {
@@ -27,6 +28,9 @@ public class Gui {
     private final Texture pixel;
     private final BitmapFont font = new BitmapFont();
     private final GlyphLayout layout = new GlyphLayout();
+    private static final float nameShowTime = 1.5f;
+    private int lastSelectedIndex = 0;
+    private float nameTimer = 0f;
 
     public Gui() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -37,12 +41,26 @@ public class Gui {
     }
 
     public void render(SpriteBatch batch, Inventory inventory, Player player){
+        float delta = Gdx.graphics.getDeltaTime();
+        updateEffects(delta, inventory, player);
+
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         renderStatusBars(batch, player);
         renderHotbar(batch, inventory);
+        renderItemName(batch, inventory);
         batch.end();
+    }
+
+    private void updateEffects(float delta, Inventory inventory, Player player) {
+        if (inventory.getSelectedIndex() != lastSelectedIndex) {
+            lastSelectedIndex = inventory.getSelectedIndex();
+            nameTimer = nameShowTime;
+        }
+        if (nameTimer > 0f) {
+            nameTimer -= delta;
+        }
     }
 
     private void renderStatusBars(SpriteBatch batch, Player player) {
@@ -79,10 +97,7 @@ public class Gui {
 
         for (int i = 0; i < Inventory.size; i++) {
             float x = startX + i * (slotSize + slotGap);
-            boolean selected = false;
-            if (i == inventory.getSelectedIndex()) {
-                selected = true;
-            }
+            boolean selected = i == inventory.getSelectedIndex();
 
             if (selected) {
                 batch.setColor(Color.GOLD);
@@ -94,6 +109,7 @@ public class Gui {
             batch.setColor(0.12f, 0.12f, 0.12f, 1f);
             batch.draw(pixel, x, y, slotSize, slotSize);
             batch.setColor(Color.WHITE);
+            font.draw(batch, String.valueOf(i + 1), x + 4f, y + slotSize - 4f);
 
             ItemStack stack = inventory.get(i);
             if (stack == null) {
@@ -109,6 +125,25 @@ public class Gui {
             }
         }
         batch.setColor(Color.WHITE);
+    }
+
+    public void renderItemName(SpriteBatch batch, Inventory inventory) {
+        ItemStack stack = inventory.getSelectedStack();
+        if (nameTimer <= 0f || stack == null) {
+            return;
+        }
+
+        float alpha = Math.min(1f, nameTimer / 0.5f);
+        String name = stack.getItem().getName();
+        layout.setText(font, name);
+
+        float barsTop = bottomMargin + slotSize + border + 2 * (barGap + border + barHeight);
+        float x = (viewport.getWorldWidth() - layout.width) / 2f;
+        float y = barsTop + 8f + layout.height;
+
+        font.setColor(1f, 1f, 1f, alpha);
+        font.draw(batch, name, x ,y);
+        font.setColor(Color.WHITE);
     }
 
     public void resize(int width, int height) {
