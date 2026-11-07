@@ -101,7 +101,11 @@ public class Gui {
 
         float healthFraction = player.getHealth() / player.getMaxStamina();
         drawBar(batch, x, healthY, width, player.getHealth(), trailHealth, player.getMaxHealth(), getHealthColour(healthFraction));
-        drawBar(batch, x, staminaY, width, player.getStamina(), player.getStamina(), player.getMaxStamina(), Color.SKY);
+        Color staminaColour = Color.SKY;
+        if (player.isExhausted()) {
+            staminaColour = Color.GRAY;
+        }
+        drawBar(batch, x, staminaY, width, player.getStamina(), player.getStamina(), player.getMaxStamina(), staminaColour);
     }
 
     private Color getHealthColour(float fraction) {

@@ -25,6 +25,8 @@ public class Player {
     private float health = maxHealth;
     private final float maxStamina = 100f;
     private float stamina = maxStamina;
+    private final float sprintRecoverThreshold = 25f;
+    private boolean exhausted = false;
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
@@ -49,7 +51,7 @@ public class Player {
         float length = (float) Math.sqrt(dx * dx + dy * dy);
 
         boolean moving = length > 0f;
-        boolean sprinting = moving && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && stamina > 0f;
+        boolean sprinting = moving && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !exhausted;
         updateStamina(delta, sprinting);
         if (moving) {
             float currentSpeed = sprinting ? speed * sprintMultiplier : speed;
@@ -64,6 +66,13 @@ public class Player {
             stamina += staminaRegenPerSecond * delta;
         }
         stamina = Math.max(0f, Math.min(maxStamina, stamina));
+
+        if (stamina <= 0f) {
+            exhausted = true;
+        }
+        if (exhausted && stamina >= sprintRecoverThreshold) {
+            exhausted = false;
+        }
     }
 
     public void damage(float amount) {
@@ -105,5 +114,9 @@ public class Player {
 
     public float getMaxStamina() {
         return maxStamina;
+    }
+
+    public boolean isExhausted() {
+        return exhausted;
     }
 }
