@@ -31,6 +31,11 @@ public class Gui {
     private static final float nameShowTime = 1.5f;
     private int lastSelectedIndex = 0;
     private float nameTimer = 0f;
+    private static final float flashTime = 0.25f;
+    private static final float trailSpeed = 40f;
+    private float lastHealth = -1f;
+    private float trailHealth = -1f;
+    private float flashTimer = 0f;
 
     public Gui() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -61,6 +66,30 @@ public class Gui {
         if (nameTimer > 0f) {
             nameTimer -= delta;
         }
+
+        float health = player.getHealth();
+        if (lastHealth < 0f) {
+            lastHealth = health;
+            trailHealth = health;
+        }
+
+        if (health < lastHealth) {
+            flashTimer = flashTime;
+        }
+        lastHealth = health;
+        if (flashTimer > 0f) {
+            flashTimer -= delta;
+        }
+
+        if (trailHealth > health) {
+            trailHealth -= trailSpeed * delta;
+            if ( trailHealth < health) {
+                trailHealth = health;
+            }
+        } else {
+            trailHealth = health;
+        }
+
     }
 
     private void renderStatusBars(SpriteBatch batch, Player player) {
@@ -70,15 +99,34 @@ public class Gui {
         float staminaY = bottomMargin + slotSize + border + barGap + border;
         float healthY = staminaY + barHeight + barGap;
 
-        drawBar(batch, x, healthY, width, player.getHealth(), player.getMaxHealth(), Color.RED);
-        drawBar(batch, x, staminaY, width, player.getStamina(), player.getMaxStamina(), Color.GOLD);
+        float healthFraction = player.getHealth() / player.getMaxStamina();
+        drawBar(batch, x, healthY, width, player.getHealth(), trailHealth, player.getMaxHealth(), getHealthColour(healthFraction));
+        drawBar(batch, x, staminaY, width, player.getStamina(), player.getStamina(), player.getMaxStamina(), Color.SKY);
     }
 
-    private void drawBar(SpriteBatch batch, float x, float y, float width, float value, float max, Color fillColour) {
+    private Color getHealthColour(float fraction) {
+        if (flashTimer > 0f) {
+            return Color.WHITE;
+        }
+        if (fraction > 0.6f) {
+            return Color.GREEN;
+        }
+        if (fraction > 0.3f) {
+            return Color.ORANGE;
+        }
+        return Color.RED;
+    }
+
+    private void drawBar(SpriteBatch batch, float x, float y, float width, float value, float trailValue, float max, Color fillColour) {
         float fraction = Math.max(0f, Math.min(1f, value / max));
+        float trailFraction = Math.max(0f, Math.min(1f, trailValue / max));
 
         batch.setColor(0.1f, 0.1f, 0.1f, 1f);
         batch.draw(pixel, x - border, y - border, width + 2 * border, barHeight + 2 * border);
+
+        batch.setColor(Color.LIGHT_GRAY);
+        batch.draw(pixel, x, y, width * trailFraction, barHeight);
+
         batch.setColor(fillColour);
         batch.draw(pixel, x, y, width * fraction, barHeight);
         batch.setColor(Color.WHITE);
