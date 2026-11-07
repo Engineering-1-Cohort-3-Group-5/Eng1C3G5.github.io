@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import eng.project.Main;
 import eng.project.collisions.CollisionHandler;
+import eng.project.entity.Keycard;
 import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
@@ -26,6 +27,7 @@ public class GameScreen extends ScreenAdapter {
     private final CameraController camera = new CameraController();
     private final SpriteBatch batch = new SpriteBatch();
     private final Player player;
+    private final Keycard keycard;
     private final Map map;
     private final GeeseManager geeseManager;
     private final FoodManager foodManager;
@@ -37,11 +39,12 @@ public class GameScreen extends ScreenAdapter {
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
         this.application = application;
-        // TextureRegion is used so that sprite atlases can later be used.
-        player = new Player(new TextureRegion(assets.get("player.png", Texture.class)), collisionHandler);
-        geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
+
+        geeseManager = new GeeseManager(new TextureRegion(assets.get("entity/goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
-        foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        keycard = new Keycard(new TextureRegion(assets.get("entity/keycard.png", Texture.class)), collisionHandler);
+        player = new Player(new TextureRegion(assets.get("entity/player.png", Texture.class)), collisionHandler);
+        foodManager = new FoodManager(new TextureRegion(assets.get("entity/food.png", Texture.class)));
     }
 
     /** Updates and draws this screen once per frame. */
@@ -78,8 +81,10 @@ public class GameScreen extends ScreenAdapter {
         switch (state) {
             case Play -> {
                 foodManager.update(delta, player.getX(), player.getY());
-                player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
+                player.update(delta);
+                keycard.update();
+                map.update();
                 collisionHandler.resolveCollisions();
                 camera.update(player.getX(), player.getY());
             }
@@ -96,6 +101,7 @@ public class GameScreen extends ScreenAdapter {
 
         // A paused game still shows the current world behind its future pause UI.
         map.render_back(batch);
+        keycard.render(batch);
         foodManager.render(batch);
         geeseManager.render(batch);
         player.render(batch);

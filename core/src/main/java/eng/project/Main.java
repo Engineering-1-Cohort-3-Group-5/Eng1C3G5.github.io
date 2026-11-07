@@ -15,15 +15,17 @@ public class Main extends com.badlogic.gdx.Game {
         assets = new AssetManager();
 
         // Load textures shared by game screens.
-        assets.load("player.png", Texture.class);
-        assets.load("goose.png", Texture.class);
-        assets.load("food.png", Texture.class);
-        assets.load("student.png", Texture.class);
+        assets.load("entity/player.png", Texture.class);
+        assets.load("entity/goose.png", Texture.class);
+        assets.load("entity/food.png", Texture.class);
+        assets.load("entity/student.png", Texture.class);
+        assets.load("entity/keycard.png", Texture.class);
 
         assets.load("world/map.png", Texture.class);
         assets.load("world/bushes.png", Texture.class);
         assets.load("world/buildings.png", Texture.class);
         assets.load("world/border.png", Texture.class);
+        assets.load("world/bus.png", Texture.class);
 
         assets.finishLoading();
 

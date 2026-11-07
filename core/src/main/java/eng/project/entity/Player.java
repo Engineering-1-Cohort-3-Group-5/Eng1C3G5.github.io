@@ -17,6 +17,7 @@ public class Player {
     private ColliderBody body;
     private float speed = 3;
     private float size = 1f;
+    private boolean hasKeycard = false;
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
@@ -53,5 +54,11 @@ public class Player {
     }
     public float getY() {
         return body.getY();
+    }
+    public void pickupKeycard(){
+        hasKeycard = true;
+    }
+    public boolean hasKeycard(){
+        return hasKeycard;
     }
 }

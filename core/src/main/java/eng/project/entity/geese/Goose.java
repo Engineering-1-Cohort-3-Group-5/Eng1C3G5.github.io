@@ -101,21 +101,4 @@ public class Goose {
             rotation
         );
     }
-
-/*    public void push(float dx, float dy){
-        x += dx;
-        y += dy;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }*/
-
-    public float getRadius(){
-        return size/2f;
-    }
 }
