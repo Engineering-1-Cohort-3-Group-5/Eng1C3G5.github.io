@@ -15,7 +15,7 @@ import eng.project.world.Map;
 public class Player {
     private final TextureRegion playerTexture;
     private ColliderBody body;
-    private float speed = 15f;
+    private float speed = 3;
     private float size = 1f;
 
     /** Creates the player at the world origin and registers its collider. */
