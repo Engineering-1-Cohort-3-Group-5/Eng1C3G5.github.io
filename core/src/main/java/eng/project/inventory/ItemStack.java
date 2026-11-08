@@ -1,5 +1,6 @@
 package eng.project.inventory;
 
+/** A number of identical items sharing one hotbar slot */
 public class ItemStack {
     private final Item item;
     private int count;
@@ -9,6 +10,7 @@ public class ItemStack {
         this.count = count;
     }
 
+    // Getters for the ItemStack class
     public Item getItem() {
         return item;
     }
@@ -17,6 +19,7 @@ public class ItemStack {
         return count;
     }
 
+    /** Is true once the stack has reached the item's maximum stack size */
     public boolean isFull() {
         return count >= item.getMaxStackSize();
     }
@@ -29,6 +32,7 @@ public class ItemStack {
         count--;
     }
 
+    /** Is true when the stack has no items left */
     public boolean isEmpty() {
         return count <= 0;
     }

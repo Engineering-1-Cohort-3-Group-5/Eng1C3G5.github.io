@@ -15,22 +15,27 @@ import com.badlogic.gdx.Gdx;
 
 /** Entry point for screen-space UI; add HUD elements here as the game expands. */
 public class Gui {
+    // Hotbar layout in pixels
     private static final float slotSize = 64f;
     private static final float slotGap = 8f;
     private static final float border = 3f;
     private static final float bottomMargin = 20f;
     private static final float iconPadding = 8f;
+    // Status bar layout in pixels
     private static final float barHeight = 18f;
     private static final float barGap = 6f;
 
     private final OrthographicCamera camera = new OrthographicCamera();
     private final ScreenViewport viewport = new ScreenViewport(camera);
-    private final Texture pixel;
-    private final BitmapFont font = new BitmapFont();
-    private final GlyphLayout layout = new GlyphLayout();
+
+    private final Texture pixel; // 1x1 white texture tinted to draw rectangles
+    private final BitmapFont font = new BitmapFont(); // built-in font feature
+    private final GlyphLayout layout = new GlyphLayout(); // measures text so it cant be centered correctly
+    // Item name popup
     private static final float nameShowTime = 1.5f;
     private int lastSelectedIndex = 0;
     private float nameTimer = 0f;
+    // Health bar damage effects
     private static final float flashTime = 0.25f;
     private static final float trailSpeed = 40f;
     private float lastHealth = -1f;
@@ -45,6 +50,7 @@ public class Gui {
         pixmap.dispose();
     }
 
+    /** Draws the HUD, must be called after the world batch has ended as its switches to screen space camera */
     public void render(SpriteBatch batch, Inventory inventory, Player player){
         float delta = Gdx.graphics.getDeltaTime();
         updateEffects(delta, inventory, player);
@@ -58,6 +64,7 @@ public class Gui {
         batch.end();
     }
 
+    /** Updates the timers for the item name popup, damage and health trails */
     private void updateEffects(float delta, Inventory inventory, Player player) {
         if (inventory.getSelectedIndex() != lastSelectedIndex) {
             lastSelectedIndex = inventory.getSelectedIndex();
@@ -92,6 +99,7 @@ public class Gui {
 
     }
 
+    /** Health and stamina bars stacked just above hotbar */
     private void renderStatusBars(SpriteBatch batch, Player player) {
         float width = Inventory.size * slotSize + (Inventory.size - 1) * slotGap;
         float x = (viewport.getWorldWidth() - width) / 2f;
@@ -108,6 +116,7 @@ public class Gui {
         drawBar(batch, x, staminaY, width, player.getStamina(), player.getStamina(), player.getMaxStamina(), staminaColour);
     }
 
+    /** Green when healthy, orange when hurt, red when low, and white briefly when damaged */
     private Color getHealthColour(float fraction) {
         if (flashTimer > 0f) {
             return Color.WHITE;
@@ -121,6 +130,7 @@ public class Gui {
         return Color.RED;
     }
 
+    /** Draws a bar filled to value/max, with a trail showing recently lost value and the number in the center */
     private void drawBar(SpriteBatch batch, float x, float y, float width, float value, float trailValue, float max, Color fillColour) {
         float fraction = Math.max(0f, Math.min(1f, value / max));
         float trailFraction = Math.max(0f, Math.min(1f, trailValue / max));
@@ -141,8 +151,8 @@ public class Gui {
         float textY = y + (barHeight + layout.height) / 2f;
         font.draw(batch, text, textX, textY);
     }
-
-    public void renderHotbar(SpriteBatch batch, Inventory inventory) {
+    /** Hotbar slots centered at the bottom of the screen with slot numbers, item icons and stack counts*/
+    private void renderHotbar(SpriteBatch batch, Inventory inventory) {
         float totalWidth = Inventory.size * slotSize + (Inventory.size - 1) * slotGap;
         float startX = (viewport.getWorldWidth() - totalWidth) / 2f;
         float y = bottomMargin;
@@ -179,7 +189,8 @@ public class Gui {
         batch.setColor(Color.WHITE);
     }
 
-    public void renderItemName(SpriteBatch batch, Inventory inventory) {
+    /** Shows the selected items name at the bottom of the screen after switching slots and fades out over time */
+    private void renderItemName(SpriteBatch batch, Inventory inventory) {
         ItemStack stack = inventory.getSelectedStack();
         if (nameTimer <= 0f || stack == null) {
             return;
@@ -198,10 +209,12 @@ public class Gui {
         font.setColor(Color.WHITE);
     }
 
+    /** Keeps the HUD camera matched to the window size */
     public void resize(int width, int height) {
         viewport.update(width, height, true);
     }
 
+    /** Releases the textures and font created by the GUI */
     public void dispose() {
         pixel.dispose();
         font.dispose();

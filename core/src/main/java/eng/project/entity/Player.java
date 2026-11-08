@@ -18,9 +18,12 @@ public class Player {
     private float speed = 3;
     private float size = 1f;
 
+    // Sprinting
     private final float sprintMultiplier = 1.8f;
     private final float staminaDrainPerSecond = 30f;
     private final float staminaRegenPerSecond = 15f;
+
+    // Health
     private final float maxHealth = 100f;
     private float health = maxHealth;
     private final float maxStamina = 100f;
@@ -35,7 +38,7 @@ public class Player {
         playerTexture = texture;
     }
 
-    /** Reads WASD input and moves at a consistent speed in every direction. */
+    /** Reads WASD input and moves at a consistent speed in every direction. Left Shift to sprint if not exhausted */
     public void update(float delta) {
         // Get input direction
         float dx = 0f;
@@ -53,12 +56,14 @@ public class Player {
         boolean moving = length > 0f;
         boolean sprinting = moving && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !exhausted;
         updateStamina(delta, sprinting);
+        // Move in normalised direction and move faster when sprinting
         if (moving) {
             float currentSpeed = sprinting ? speed * sprintMultiplier : speed;
             body.push((dx / length) * currentSpeed * delta, (dy / length) * currentSpeed * delta);
         }
     }
 
+    /** Drains the stamina whilst sprinting and regenerates it otherwise. Sprinting until 0 stamina locks out sprinting until recovered past threshold */
     public void updateStamina(float delta, boolean sprinting) {
         if (sprinting) {
             stamina -= staminaDrainPerSecond * delta;
@@ -75,14 +80,17 @@ public class Player {
         }
     }
 
+    /** Reduces health but never below zero */
     public void damage(float amount) {
         health = Math.max(0f, health - amount);
     }
 
+    /** Restores health but never above max (100) */
     public void heal(float amount) {
         health = Math.min(maxHealth, health + amount);
     }
 
+    /** Returns true once health has reached zero */
     public boolean isDead() {
         return health <= 0f;
     }
@@ -92,6 +100,7 @@ public class Player {
         batch.draw(playerTexture,body.getX()-size/2f, body.getY()-size/2f, size, size);
     }
 
+    // Getters for position, health and stamina values
     public float getX() {
         return body.getX();
     }
@@ -116,6 +125,7 @@ public class Player {
         return maxStamina;
     }
 
+    /** Returns true while sprinting is locked after running out of stamina */
     public boolean isExhausted() {
         return exhausted;
     }

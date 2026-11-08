@@ -45,6 +45,7 @@ public class GameScreen extends ScreenAdapter {
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
 
+        // Mouse wheel scrolls the hotbar selection
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
@@ -52,20 +53,6 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
-
-        TextureRegion testIcon = new TextureRegion(assets.get("food.png", Texture.class));
-        for (int i = 0; i < 3; i++) {
-            inventory.add(createTestItem(testIcon));
-        }
-    }
-
-    private Item createTestItem(TextureRegion icon) {
-        return new Item("Test", icon) {
-            @Override
-            public boolean use() {
-                return true;
-            }
-        };
     }
 
     /** Updates and draws this screen once per frame. */
@@ -114,6 +101,7 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    /** Number keys 1-5 select a hotbar slot; E uses the selected item  */
     private void handleInventoryInput() {
         for (int i = 0; i < Inventory.size; i++) {
             if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + i))) {
@@ -122,9 +110,6 @@ public class GameScreen extends ScreenAdapter {
         }
         if (Gdx.input.isKeyJustPressed((Input.Keys.E))) {
             inventory.useSelected();
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-            player.damage(10f); // H to damage just for testing
         }
     }
 
@@ -140,6 +125,7 @@ public class GameScreen extends ScreenAdapter {
         player.render(batch);
         map.render_front(batch);
         batch.end();
+        // HUD uses its own screen camera so it is drawn after the world batch is ended
         gui.render(batch, inventory, player);
     }
 
