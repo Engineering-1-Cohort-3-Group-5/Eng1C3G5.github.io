@@ -1,9 +1,11 @@
 package eng.project.entity.students;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import eng.project.collisions.CollisionHandler;
+import eng.project.entity.geese.Goose;
 import eng.project.world.Feature;
 import eng.project.world.Map;
 
@@ -12,12 +14,18 @@ import java.util.ArrayList;
 public class StudentManager {
 
     private final TextureRegion studentTexture;
+
     private final Feature building = Map.getOneMapFeature();
-    private final float x = building.getX() + building.getHalfWidth();
-    private final float y = building.getY() + building.getHalfHeight();
+    private final float spawnX =
+        building.getX() + building.getHalfWidth();
+    private final float spawnY =
+        building.getY() + building.getHalfHeight();
+    private final CollisionHandler collisionHandler;
+    private float spawnTimer = 2f;
+    private int studentCount = 10;
 
 
-    private final ArrayList<Student> students = new ArrayList<Student>();
+    private ArrayList<Student> students = new ArrayList<Student>();
 
     /**
      * Creates the initial flock and registers every goose collider.
@@ -26,27 +34,26 @@ public class StudentManager {
                           CollisionHandler collisionHandler) {
 
         studentTexture = texture;
-        int spawnTimer = 30;
-
-        while (spawnTimer > 0) {
-            Student student = new Student(x, y, studentTexture,
-                collisionHandler);
-            students.add(student);
-            spawnTimer -= 3;
-        }
-    }
-
-    public void target(){
-        //TODO: generate coordinates on border for students to aim for
-        float targetX;
-        float targetY;
+        this.collisionHandler = collisionHandler;
 
     }
 
     public void update(float delta) {
+        spawnTimer -= delta;
+
+        if (spawnTimer <= 0f && studentCount > 0) {
+            Student student = new Student(spawnX,spawnY,studentTexture,
+                collisionHandler);
+            students.add(student);
+            spawnTimer = 2f;
+            studentCount -= 1;
+        }
+
         for (Student student : students) {
             student.move(delta);
         }
+
+        remove();
     }
     /**
      * Removes the student from the game once it reaches designated
@@ -54,7 +61,10 @@ public class StudentManager {
      *
      */
     public void remove(){
-        //TODO
+        if (student.getState() == StudentState.TargetFound) {
+            collisionHandler.getColliders().remove(student);
+        }
+        students.removeIf(student -> student.getState() == StudentState.TargetFound);
     }
 
     public void render(SpriteBatch batch) {
