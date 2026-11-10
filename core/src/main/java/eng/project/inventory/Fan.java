@@ -45,7 +45,7 @@ public class Fan {
 
         //new wind colluder so that half width and half height makes a 1x1 box, larger box more geese but bigger jumps
         windBody = new ColliderBody(this, spawnX, spawnY, false,
-            new Box(0.5f, 0.5f));
+            new Box(0.5f, 0.5f), true);
         collisionHandler.add(windBody);
         System.out.println("Fan used wind collider created");
         timeRemaining = 0.75f; //blast lasts for 0.75 seconds, can be changed, distance = speed * time
