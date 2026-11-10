@@ -3,7 +3,7 @@ package eng.project.entity.students;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
 import eng.project.entity.geese.Goose;
 import eng.project.world.Feature;
@@ -23,6 +23,10 @@ public class StudentManager {
     private final CollisionHandler collisionHandler;
     private float spawnTimer = 2f;
     private int studentCount = 10;
+    private ArrayList<ColliderBody> colliders;
+
+    private float delta = Gdx.graphics.getDeltaTime();
+
 
 
     private ArrayList<Student> students = new ArrayList<Student>();
@@ -35,10 +39,11 @@ public class StudentManager {
 
         studentTexture = texture;
         this.collisionHandler = collisionHandler;
+        colliders = collisionHandler.getColliders();
 
     }
 
-    public void update(float delta) {
+    public void generateStudents(){
         spawnTimer -= delta;
 
         if (spawnTimer <= 0f && studentCount > 0) {
@@ -48,6 +53,11 @@ public class StudentManager {
             spawnTimer = 2f;
             studentCount -= 1;
         }
+    }
+
+    public void update(float delta) {
+
+        generateStudents();
 
         for (Student student : students) {
             student.move(delta);
@@ -61,10 +71,15 @@ public class StudentManager {
      *
      */
     public void remove(){
-        if (student.getState() == StudentState.TargetFound) {
-            collisionHandler.getColliders().remove(student);
+        int s = students.size() - 1;
+        while (s >= 0) {
+            Student student = students.get(s);
+            if (student.getState() == StudentState.TargetFound) {
+                colliders.remove(student.getBody());
+                students.remove(student);
+            }
+            s -= 1;
         }
-        students.removeIf(student -> student.getState() == StudentState.TargetFound);
     }
 
     public void render(SpriteBatch batch) {
