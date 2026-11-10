@@ -2,6 +2,7 @@ package eng.project.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,6 +31,13 @@ public class CameraController {
     public Matrix4 getMatrix(){
         return camera.combined;
     }
+
+    public Vector2 getWorldPosition( float screenX, float screenY){
+        Vector2 position = new Vector2(screenX, screenY);
+        viewport.unproject(position);
+        return position;
+    }
+
 
     /** Updates the viewport after a window-size change without re-centering the camera. */
     public void resize(int width, int height){

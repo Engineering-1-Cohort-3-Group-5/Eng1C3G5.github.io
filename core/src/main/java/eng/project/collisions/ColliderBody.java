@@ -29,6 +29,11 @@ public class ColliderBody {
     public Shape getShape(){
         return shape;
     }
+
+    public Object getOwner(){
+        return owner;
+    }
+
     /** Returns whether this body is intended to be a non-solid trigger. */
     public boolean isTrigger(){
         return isTrigger;

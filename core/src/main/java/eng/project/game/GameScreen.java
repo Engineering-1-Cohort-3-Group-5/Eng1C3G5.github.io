@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import eng.project.Main;
 import eng.project.collisions.CollisionHandler;
@@ -15,6 +16,7 @@ import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.students.StudentManager;
 import eng.project.inventory.Inventory;
+import eng.project.inventory.Fan;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
 
@@ -31,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
     private final GeeseManager geeseManager;
     private final StudentManager studentManager;
     private final FoodManager foodManager;
+    private final Fan fan;
     private final Gui gui = new Gui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
@@ -44,6 +47,7 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        fan = new Fan(collisionHandler);
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
@@ -86,6 +90,12 @@ public class GameScreen extends ScreenAdapter {
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                    System.out.println(("F key pressed"));
+                    Vector2 mousePos = camera.getWorldPosition(Gdx.input.getX(), Gdx.input.getY());
+                    fan.use(player.getX(), player.getY(), mousePos.x, mousePos.y);
+                }
+                fan.update(delta);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();
                 camera.update(player.getX(), player.getY());
