@@ -110,7 +110,6 @@ public class GameScreen extends ScreenAdapter {
         studentManager.render(batch);
         player.render(batch);
         map.render_front(batch);
-        gui.render(batch);
 
         batch.end();
 
