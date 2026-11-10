@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
 
@@ -15,7 +16,8 @@ public class Map {
     private final Texture borderTexture;
     private static final float width = 120f;
     private static final float height = 100f;
-    private final ArrayList<Feature> mapFeatures = new ArrayList<>();
+    private static final ArrayList<Feature> mapFeatures =
+        new ArrayList<>();
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(AssetManager assets, CollisionHandler collisionHandler){
         this.mapTexture = assets.get("world/map.png",Texture.class);
@@ -101,5 +103,13 @@ public class Map {
 
     public static float getHeight(){
         return height;
+    }
+
+    public static Feature getOneMapFeature(){
+        if (mapFeatures.isEmpty()){
+            return null;
+        }
+        int index = MathUtils.random(mapFeatures.size() - 1);
+        return mapFeatures.get(index);
     }
 }
