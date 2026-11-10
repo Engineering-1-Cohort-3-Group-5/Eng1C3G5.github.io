@@ -21,7 +21,7 @@ public class StudentManager {
     private final float spawnY =
         building.getY() + building.getHalfHeight();
     private final CollisionHandler collisionHandler;
-    private float spawnTimer = 2f;
+    private float spawnTimer = 1f;
     private int studentCount = 30;
     private ArrayList<ColliderBody> colliders;
 
@@ -50,7 +50,7 @@ public class StudentManager {
             Student student = new Student(spawnX,spawnY,studentTexture,
                 collisionHandler);
             students.add(student);
-            spawnTimer = 2f;
+            spawnTimer = 1f;
             studentCount -= 1;
         }
     }
