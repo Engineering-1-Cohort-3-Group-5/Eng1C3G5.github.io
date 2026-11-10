@@ -15,12 +15,13 @@ import eng.project.world.Map;
 public class Player {
     private final TextureRegion playerTexture;
     private ColliderBody body;
-    private float speed = 3;
+    private float speed = 3f;
     private float size = 1f;
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
-        body = new ColliderBody(this,-30,-30,false,new Circle(0.4f));
+        body = new ColliderBody(this,-30,-30,false,new Circle(0.4f),
+            true);
         collisionHandler.add(body);
         playerTexture = texture;
     }
