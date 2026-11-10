@@ -41,8 +41,8 @@ public class GameScreen extends ScreenAdapter {
         this.application = application;
         // TextureRegion is used so that sprite atlases can later be used.
         player = new Player(new TextureRegion(assets.get("player.png", Texture.class)), collisionHandler);
-        geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
-        map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
+        geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
+        map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
     /** Updates and draws this screen once per frame. */
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0.3f, 0.5f, 0.3f, 1f);
         if (handleInput()) {
             return;
         }
@@ -85,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
             case Play -> {
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
-                geeseManager.update(delta, player.getX(), player.getY(), foodManager);
+                geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();
                 camera.update(player.getX(), player.getY());
@@ -102,11 +102,12 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
 
         // A paused game still shows the current world behind its future pause UI.
-        map.render(batch);
+        map.render_back(batch);
         foodManager.render(batch);
         geeseManager.render(batch);
         studentManager.render(batch);
         player.render(batch);
+        map.render_front(batch);
         gui.render(batch);
 
         batch.end();

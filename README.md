@@ -8,6 +8,8 @@ Planning:
 
 Implementation:
 
+Risks: https://docs.google.com/document/d/1OQcT9GZBgtdByeZ4WNBoPyWrezSevrTCJko1J7j-QE0/edit?usp=sharing
+
 Executable:
 
 Repository: https://github.com/Engineering-1-Cohort-3-Group-5/Eng1C3G5.github.io/tree/main
