@@ -1,6 +1,8 @@
 package eng.project.collisions;
-
 import java.util.ArrayList;
+
+import eng.project.entity.geese.Goose;
+import eng.project.inventory.Fan;
 
 /**
  * Performs pairwise collision detection and positional resolution for registered bodies.
@@ -61,6 +63,16 @@ public class CollisionHandler {
         float dx = circleCollider.getX() - closestX;
         float dy = circleCollider.getY() - closestY;
         float distanceSquared = dx * dx + dy * dy;
+
+        if (boxCollider.getOwner() instanceof Fan wind) {
+            if (circleCollider.getOwner() instanceof Goose
+                && distanceSquared < circle.radius() * circle.radius()) {
+                boxCollider.touching(circleCollider);
+                circleCollider.touching(boxCollider);
+                wind.pushGoose(circleCollider);
+            }
+            return;
+        }
 
         if (distanceSquared > 0f) {
             float distance = (float) Math.sqrt(distanceSquared);
