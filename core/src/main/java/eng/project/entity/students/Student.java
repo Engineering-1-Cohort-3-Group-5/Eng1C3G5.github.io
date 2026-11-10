@@ -46,7 +46,7 @@ public class Student {
         studentTexture = texture;
         this.collisionHandler = collisionHandler;
         body = new ColliderBody(this, spawnX, spawnY, false,
-            new Circle(size / 2f));
+            new Circle(size / 2f), false);
         collisionHandler.add(body);
     }
 

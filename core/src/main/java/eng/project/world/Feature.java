@@ -10,7 +10,7 @@ public class Feature {
     private final ColliderBody body;
     /** Creates a feature at its collider centre. */
     public Feature(float x, float y, Shape colliderShape, TextureRegion texture, CollisionHandler collisionHandler){
-        body = new ColliderBody(this,x,y,false,colliderShape);
+        body = new ColliderBody(this,x,y,false,colliderShape, false);
         collisionHandler.add(body);
         this.texture = texture;
     }

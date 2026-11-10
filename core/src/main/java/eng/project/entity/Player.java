@@ -20,7 +20,7 @@ public class Player {
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
-        body = new ColliderBody(this,0,0,false,new Circle(0.6f));
+        body = new ColliderBody(this,0,0,false,new Circle(0.6f), true);
         collisionHandler.add(body);
         playerTexture = texture;
     }
