@@ -20,8 +20,6 @@ import eng.project.inventory.Fan;
 import eng.project.inventory.Whistle;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
-import com.badlogic.gdx.InputAdapter;
-import eng.project.inventory.Item;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -57,15 +55,6 @@ public class GameScreen extends ScreenAdapter {
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
                     ".png", Texture.class)), collisionHandler);
-
-        // Mouse wheel scrolls the hotbar selection
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean scrolled(float amountX, float amountY) {
-                inventory.scroll((int) Math.signum(amountY));
-                return true;
-            }
-        });
     }
 
     /** Updates and draws this screen once per frame. */
@@ -101,7 +90,6 @@ public class GameScreen extends ScreenAdapter {
     private void update(float delta) {
         switch (state) {
             case Play -> {
-                handleInventoryInput();
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
@@ -124,18 +112,6 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    /** Number keys 1-5 select a hotbar slot; E uses the selected item  */
-    private void handleInventoryInput() {
-        for (int i = 0; i < Inventory.size; i++) {
-            if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + i))) {
-                inventory.select(i);
-            }
-        }
-        if (Gdx.input.isKeyJustPressed((Input.Keys.E))) {
-            inventory.useSelected();
-        }
-    }
-
     /** Draws the world back-to-front using the current camera. */
     private void renderWorld() {
         batch.setProjectionMatrix(camera.getMatrix());
@@ -148,9 +124,9 @@ public class GameScreen extends ScreenAdapter {
         studentManager.render(batch);
         player.render(batch);
         map.render_front(batch);
+        gui.render(batch);
+
         batch.end();
-        // HUD uses its own screen camera so it is drawn after the world batch is ended
-        gui.render(batch, inventory, player);
     }
 
     /** Stops simulation updates while keeping the world visible. */
@@ -171,7 +147,6 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.resize(width, height);
-        gui.resize(width, height);
     }
 
     /** Releases rendering resources owned by this screen. */
@@ -179,6 +154,5 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
         // Textures are disposed by AssetManager in Main.
         batch.dispose();
-        gui.dispose();
     }
 }
