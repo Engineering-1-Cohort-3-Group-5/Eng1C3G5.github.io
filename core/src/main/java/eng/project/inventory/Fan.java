@@ -1,12 +1,19 @@
 package eng.project.inventory;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import eng.project.collisions.Box;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
+import eng.project.entity.Player;
+import eng.project.game.CameraController;
 
 
-public class Fan {
+public class Fan extends Item{
     private CollisionHandler collisionHandler;
     private ColliderBody windBody;
+    private Player player;
+    private ItemState state = ItemState.Usable;
+    private final CameraController camera;
     private float directionX;
     private float directionY;
     private float timeRemaining;
@@ -15,12 +22,22 @@ public class Fan {
     private float pushStep;
     private final float speed = 6.0f; //wind collider speed in units per second
     private final float pushSpeed = 6.0f;
+    private float rechargeTime = 10;
 
-    public Fan(CollisionHandler collisionHandler){
+
+    public Fan(CollisionHandler collisionHandler, Player player, CameraController camera){
         this.collisionHandler = collisionHandler;
+        this.player = player;
+        this.camera = camera;
     }
 
-    public void use(float playerX, float playerY, float targetX, float targetY){
+    @Override
+    public void Use(){
+        Vector2 mousePos = camera.getWorldPosition(Gdx.input.getX(), Gdx.input.getY());
+        float targetX = mousePos.x;
+        float targetY = mousePos.y;
+        float playerX = player.getX();
+        float playerY = player.getY();
         if(windBody != null){
             collisionHandler.remove(windBody);
             windBody = null;
@@ -80,5 +97,14 @@ public class Fan {
         gooseBody.push(
             directionX * pushStep,
             directionY * pushStep);
+    }
+
+    @Override
+    public void Recharge(){
+        while (rechargeTime > 0){
+            rechargeTime -= 1;
+        }
+        rechargeTime = 10;
+        state = ItemState.Usable;
     }
 }

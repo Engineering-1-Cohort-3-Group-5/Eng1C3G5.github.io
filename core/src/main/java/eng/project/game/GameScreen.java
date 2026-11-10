@@ -17,6 +17,7 @@ import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.students.StudentManager;
 import eng.project.inventory.Inventory;
 import eng.project.inventory.Fan;
+import eng.project.inventory.Whistle;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
 
@@ -34,6 +35,7 @@ public class GameScreen extends ScreenAdapter {
     private final StudentManager studentManager;
     private final FoodManager foodManager;
     private final Fan fan;
+    private final Whistle whistle;
     private final Gui gui = new Gui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
@@ -47,7 +49,8 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
-        fan = new Fan(collisionHandler);
+        fan = new Fan(collisionHandler, player, camera);
+        whistle = new Whistle(player, geeseManager);
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
@@ -92,8 +95,11 @@ public class GameScreen extends ScreenAdapter {
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
                 if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
                     System.out.println(("F key pressed"));
-                    Vector2 mousePos = camera.getWorldPosition(Gdx.input.getX(), Gdx.input.getY());
-                    fan.use(player.getX(), player.getY(), mousePos.x, mousePos.y);
+                    fan.Use();
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+                    System.out.println(("G key pressed"));
+                    whistle.Use();
                 }
                 fan.update(delta);
                 studentManager.update(delta);

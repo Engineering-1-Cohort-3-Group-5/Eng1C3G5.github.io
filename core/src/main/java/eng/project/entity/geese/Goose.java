@@ -102,21 +102,28 @@ public class Goose {
             rotation
         );
     }
-
-/*    public void push(float dx, float dy){
+/*
+    public void push(float dx, float dy){
         x += dx;
         y += dy;
-    }
+    } */
 
     public float getX() {
-        return x;
+        return body.getX();
     }
 
     public float getY() {
-        return y;
-    }*/
+        return body.getY();
+    }
 
     public float getRadius(){
         return size/2f;
     }
+
+    public void changeState(GooseState newState){
+        state = newState;
+    }
+    public void changeTimer(float newTime){
+        reTargetTimer = newTime;
+    };
 }
