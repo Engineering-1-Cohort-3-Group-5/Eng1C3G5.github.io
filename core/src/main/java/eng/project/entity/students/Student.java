@@ -6,10 +6,6 @@ import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.food.Food;
-import eng.project.entity.food.FoodManager;
-import eng.project.entity.food.FoodTarget;
-import eng.project.entity.geese.GooseState;
 import eng.project.world.Map;
 
 public class Student {
@@ -46,7 +42,7 @@ public class Student {
         studentTexture = texture;
         this.collisionHandler = collisionHandler;
         body = new ColliderBody(this, spawnX, spawnY, false,
-            new Circle(size / 2f), false);
+            new Circle(size / 2f), true);
         collisionHandler.add(body);
     }
 
