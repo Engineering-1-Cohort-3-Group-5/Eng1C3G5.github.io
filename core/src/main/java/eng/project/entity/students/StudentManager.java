@@ -22,7 +22,7 @@ public class StudentManager {
         building.getY() + building.getHalfHeight();
     private final CollisionHandler collisionHandler;
     private float spawnTimer = 2f;
-    private int studentCount = 10;
+    private int studentCount = 30;
     private ArrayList<ColliderBody> colliders;
 
     private float delta = Gdx.graphics.getDeltaTime();

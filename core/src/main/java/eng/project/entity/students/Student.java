@@ -18,8 +18,7 @@ public class Student {
     private static final float mapHeight = Map.getHeight();
     private static final float targetX =
         MathUtils.random((-mapWidth) / 2f, mapWidth / 2f);
-    private static final float targetY =
-        MathUtils.random((-mapHeight) / 2f, mapHeight / 2f);
+    private static final float targetY = mapHeight / 2f;
 
 
 
