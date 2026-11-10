@@ -26,10 +26,11 @@ public class Goose {
         // Add some random variation to their stats
         speed = MathUtils.random(0.5f, 2.5f);
         size = MathUtils.random(0.8f, 1.2f);
-        sightDistance2 = MathUtils.random(36f, 81f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
+        sightDistance2 = MathUtils.random(64, 144); // Squared distance the goose can see, a minor optimisation to avoid multiplications
 
         gooseTexture = texture;
-        body = new ColliderBody(this,spawnX,spawnY,false, new Circle(size/2f));
+        body = new ColliderBody(this,spawnX,spawnY,false,
+            new Circle(size/2f), true);
         collisionHandler.add(body);
     }
     /** Periodically selects the highest-priority visible target. */

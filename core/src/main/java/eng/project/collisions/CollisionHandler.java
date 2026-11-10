@@ -175,4 +175,8 @@ public class CollisionHandler {
             }
         }
     }
+
+    public ArrayList<ColliderBody> getColliders(){
+        return colliders;
+    }
 }
