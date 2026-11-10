@@ -1,6 +1,5 @@
 package eng.project.inventory;
 
-import eng.project.collisions.ColliderBody;
 import eng.project.entity.geese.Goose;
 import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.geese.GooseState;
