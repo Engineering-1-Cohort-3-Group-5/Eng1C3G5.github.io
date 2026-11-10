@@ -33,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
     private GameState state = GameState.Play;
+    private float timeRemaining = 300f;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
@@ -77,6 +78,8 @@ public class GameScreen extends ScreenAdapter {
     private void update(float delta) {
         switch (state) {
             case Play -> {
+                // Count down while the game is running.
+                timeRemaining = Math.max(0f, timeRemaining - delta);
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager);
@@ -88,21 +91,23 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
-
     /** Draws the world back-to-front using the current camera. */
     private void renderWorld() {
         batch.setProjectionMatrix(camera.getMatrix());
         batch.begin();
 
-        // A paused game still shows the current world behind its future pause UI.
+        // Draw the game world.
         map.render(batch);
         foodManager.render(batch);
         geeseManager.render(batch);
         player.render(batch);
-        gui.render(batch);
 
         batch.end();
+
+        // Draw the timer in the top-left corner.
+        gui.render(batch, timeRemaining);
     }
+
 
     /** Stops simulation updates while keeping the world visible. */
     public void pauseGame() {
@@ -128,6 +133,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         // Textures are disposed by AssetManager in Main.
+        // gui.dispose();
         batch.dispose();
     }
 }
