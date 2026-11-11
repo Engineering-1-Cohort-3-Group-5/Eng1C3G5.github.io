@@ -15,6 +15,7 @@ import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.students.StudentManager;
+import eng.project.entity.mushrooms.MushroomManager;
 import eng.project.inventory.Inventory;
 import eng.project.inventory.Fan;
 import eng.project.inventory.Whistle;
@@ -36,6 +37,7 @@ public class GameScreen extends ScreenAdapter {
     private final FoodManager foodManager;
     private final Fan fan;
     private final Whistle whistle;
+    private final MushroomManager mushroomManager;
     private final Gui gui = new Gui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
@@ -50,6 +52,11 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        mushroomManager = new MushroomManager(
+            new TextureRegion(assets.get("mushroom.png", Texture.class)),
+            map
+        );
+
         fan = new Fan(collisionHandler, player, camera);
         whistle = new Whistle(player, geeseManager);
         studentManager =
@@ -107,7 +114,12 @@ public class GameScreen extends ScreenAdapter {
                 fan.update(delta);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();
-                camera.update(player.getX(), player.getY());
+                mushroomManager.update(delta, player.getX(), player.getY());
+                camera.update(
+                    player.getX(),
+                    player.getY(),
+                    mushroomManager.isDizzy()
+                );
             }
             case Pause -> {
                 // Pause-menu input will be handled here when it is implemented.
@@ -122,6 +134,7 @@ public class GameScreen extends ScreenAdapter {
         // A paused game still shows the current world behind its future pause UI.
         map.render_back(batch);
         foodManager.render(batch);
+        mushroomManager.render(batch);
         geeseManager.render(batch);
         studentManager.render(batch);
         player.render(batch);
