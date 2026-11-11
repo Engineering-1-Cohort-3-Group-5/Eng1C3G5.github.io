@@ -16,7 +16,7 @@ public class MushroomManager {
     // makes 10 mushrooms at random positions
     public MushroomManager(TextureRegion texture, Map map) {
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
 
             float x = MathUtils.random(-19f, 19f);
             float y = MathUtils.random(-19f, 19f);
