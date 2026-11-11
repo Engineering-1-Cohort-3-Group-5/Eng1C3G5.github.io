@@ -16,6 +16,8 @@ import eng.project.entity.geese.GeeseManager;
 import eng.project.inventory.Inventory;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
+import eng.project.ui.Pause;
+import eng.project.ui.Play;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -29,10 +31,13 @@ public class GameScreen extends ScreenAdapter {
     private final Map map;
     private final GeeseManager geeseManager;
     private final FoodManager foodManager;
-    private final Gui gui = new Gui();
+    private final Gui gui;
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
-    private GameState state = GameState.Play;
+    public static GameState state = GameState.Play;
+    private Pause pauser = new Pause();
+    private Play playRunnable = new Play();
+
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
@@ -42,6 +47,7 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
         map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        gui = new Gui(pauser, playRunnable);
     }
 
     /** Updates and draws this screen once per frame. */
@@ -64,9 +70,10 @@ public class GameScreen extends ScreenAdapter {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (state == GameState.Pause) {
-                resumeGame();
+
+
             } else {
-                pauseGame();
+
             }
         }
 
@@ -99,20 +106,24 @@ public class GameScreen extends ScreenAdapter {
         foodManager.render(batch);
         geeseManager.render(batch);
         player.render(batch);
-        gui.render(batch);
-
         batch.end();
+
+        gui.render();
     }
 
     /** Stops simulation updates while keeping the world visible. */
-    public void pauseGame() {
+    public static void pauseGame() {
         state = GameState.Pause;
     }
 
-    /** Resumes simulation updates after {@link #pauseGame()}. */
-    public void resumeGame() {
+    //gui.pauseButton(pauser);//{state = GameState.Pause;}
+
+    /** Resumes simulation updates after {link #pauseGame()}. */
+    public static void resumeGame() {
         state = GameState.Play;
     }
+
+    //gui.playButton(playRunnable);//{state = GameState.Play;}
 
     /** Returns whether the game simulation is currently paused. */
     public boolean isPaused() {
