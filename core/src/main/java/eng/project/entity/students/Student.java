@@ -3,46 +3,56 @@ package eng.project.entity.students;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
+import eng.project.world.Feature;
 import eng.project.world.Map;
 
+/**
+ * A moving student who exits a pre-selected building and travels
+ * across the map to another building at specified time.
+ */
 public class Student {
 
-    private static final float mapWidth = Map.getWidth();
-    private static final float mapHeight = Map.getHeight();
-    private static final float targetX =
-        MathUtils.random((-mapWidth) / 2f, mapWidth / 2f);
-    private static final float targetY = mapHeight / 2f;
-
-
+    private final Feature building = Map.studentTargetBuilding();
+    private final float targetX =
+        building.getX();
+    private final float targetY =
+        building.getY() + building.getHalfHeight();
 
     private final TextureRegion studentTexture;
     private final float speed, size;
-    private float rotation;
     private final ColliderBody body;
+    private float rotation;
     private StudentState state = StudentState.Travelling;
 
     /**
-     * Creates a student with set visual size, and movement speed.
+     *Creates a student with set speed and size.
+     * @param spawnX is the x coordinate of where student first
+     *               appears on map.
+     * @param spawnY is the y coordinate of where student first
+     *      *               appears on map.
+     * @param texture is the student appearance.
+     * @param collisionHandler dictates how student interacts with
+     *                         other objects.
      */
     public Student(float spawnX, float spawnY,
                    TextureRegion texture,
                    CollisionHandler collisionHandler) {
-        // Add some random variation to their stats
+
         speed = 2f;
         size = 2f;
-
         studentTexture = texture;
+        //
         body = new ColliderBody(this, spawnX, spawnY, false,
             new Circle(size / 2f), false);
         collisionHandler.add(body);
     }
 
     /**
-     * Moves towards the map location, aiming to reach within 1f of
-     * it.
+     *Student moves towards the target.
      */
     public void move(float delta) {
         if (state != StudentState.TargetFound) {
@@ -65,6 +75,9 @@ public class Student {
         }
     }
 
+    /**
+     * Renders 2d graphic of current student.
+     */
     public void render(SpriteBatch batch) {
         batch.draw(
             studentTexture,
@@ -76,10 +89,17 @@ public class Student {
         );
     }
 
+    /**
+     * @return the current state of the student.
+     */
     public StudentState getState() {
         return state;
     }
 
+    /**
+     * Renders 2d graphic of current student.
+     * @return the interactive element of the student.
+     */
     public ColliderBody getBody() {
         return body;
     }

@@ -183,10 +183,12 @@ public class CollisionHandler {
                 final float smooth = 0.3f;
 
                 // Push apart if colliders are pushable
-                if (colliderA.getPushable()){
+                if (colliderA.getPushable() && colliderB.getPushable()) {
                     colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                }
-                if (colliderB.getPushable()){
+                    colliderB.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                } else if (colliderA.getPushable()){
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                } else  if (colliderB.getPushable() && !colliderA.getPushable()){
                     colliderB.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
                 }
             }

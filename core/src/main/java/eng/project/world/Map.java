@@ -1,10 +1,10 @@
 package eng.project.world;
 
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
 
@@ -18,8 +18,6 @@ public class Map {
     private static final float height = 100f;
     private static final ArrayList<Feature> mapFeatures =
         new ArrayList<>();
-    private Box[] buildingColliders;
-
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(AssetManager assets, CollisionHandler collisionHandler){
         this.mapTexture = assets.get("world/map.png",Texture.class);
@@ -107,8 +105,13 @@ public class Map {
         return height;
     }
 
-    public Box getB4Dimensions(){
-        return buildingColliders.get(4);
+    //Where the students generate for student hidden event
+    public static Feature studentStartBuilding(){
+        return mapFeatures.get(4);
+    }
+
+    public static Feature studentTargetBuilding(){
+        return mapFeatures.get(2);
     }
 
 

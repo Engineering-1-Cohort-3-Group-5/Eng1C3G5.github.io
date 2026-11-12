@@ -102,11 +102,6 @@ public class Goose {
             rotation
         );
     }
-/*
-    public void push(float dx, float dy){
-        x += dx;
-        y += dy;
-    } */
 
     public float getX() {
         return body.getX();
