@@ -66,7 +66,7 @@ public class CollisionHandler {
 
         if (boxCollider.getOwner() instanceof Fan wind) {
             if (circleCollider.getOwner() instanceof Goose
-                && distanceSquared < circle.radius() * circle.radius()) {
+                    && distanceSquared < circle.radius() * circle.radius()) {
                 boxCollider.touching(circleCollider);
                 circleCollider.touching(boxCollider);
                 wind.pushGoose(circleCollider);
@@ -118,7 +118,7 @@ public class CollisionHandler {
                     normalY = 1f;
                 }
                 circleCollider.push(normalX * (nearestFaceDistance + circle.radius()),
-                    normalY * (nearestFaceDistance + circle.radius()));
+                        normalY * (nearestFaceDistance + circle.radius()));
             }
         }
     }
@@ -147,7 +147,6 @@ public class CollisionHandler {
             } else {
                 float pushY = (dy < 0f ? -overlapY : overlapY) / 2f;
 
-                // Push apart if colliders are pushable
                 colliderA.push(0f, pushY);
                 colliderB.push(0f, -pushY);
             }
@@ -182,15 +181,16 @@ public class CollisionHandler {
                 // Help them become less rigid
                 final float smooth = 0.3f;
 
-                // Push apart if colliders are pushable
+                // Push apart
                 if (colliderA.getPushable() && colliderB.getPushable()) {
                     colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                    colliderB.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                } else if (colliderA.getPushable()){
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                } else if (colliderA.getPushable() && !colliderB.getPushable()){
                     colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
                 } else  if (colliderB.getPushable() && !colliderA.getPushable()){
-                    colliderB.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
                 }
+
             }
         }
     }
