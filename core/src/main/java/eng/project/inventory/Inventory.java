@@ -1,9 +1,7 @@
 package eng.project.inventory;
 
-/** Fixed size hotbar, where each slot holds a stack of identical items or null when empty */
 public class Inventory {
     public static final int size = 5;
-
     private final ItemStack[] slots = new ItemStack[size];
     private int selectedIndex = 0;
 
@@ -68,4 +66,3 @@ public class Inventory {
         return selectedIndex;
     }
 }
-

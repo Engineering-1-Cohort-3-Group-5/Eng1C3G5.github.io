@@ -37,5 +37,3 @@ public class ItemStack {
         return count <= 0;
     }
 }
-
-

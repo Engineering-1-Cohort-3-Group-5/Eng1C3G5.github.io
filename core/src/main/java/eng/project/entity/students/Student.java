@@ -19,15 +19,13 @@ public class Student {
 
 
     private final TextureRegion studentTexture;
-    private final float speed, size, sightDistance2;
-    private float rotation, reTargetTimer;
+    private final float speed, size;
+    private float rotation;
     private ColliderBody body;
     private StudentState state = StudentState.Travelling;
-    private CollisionHandler collisionHandler;
 
     /**
-     * Creates a goose with randomized visual size, movement speed,
-     * and sight range.
+     * Creates a student with set visual size, and movement speed.
      */
     public Student(float spawnX, float spawnY,
                    TextureRegion texture,
@@ -35,25 +33,16 @@ public class Student {
         // Add some random variation to their stats
         speed = 2f;
         size = 2f;
-        sightDistance2 = MathUtils.random(36f, 81f); // Squared
-        // distance the goose can see, a minor optimisation to
-        // avoid multiplications
 
         studentTexture = texture;
-        this.collisionHandler = collisionHandler;
         body = new ColliderBody(this, spawnX, spawnY, false,
             new Circle(size / 2f), true);
         collisionHandler.add(body);
     }
 
-    public void target(float delta) {
-        //TODO: Check that student is moving in target direction
-        // every 4 frames.
-    }
-
-
     /**
-     * Moves towards the map location without overshooting it.
+     * Moves towards the map location, aiming to reach within 1f of
+     * it.
      */
     public void move(float delta) {
         if (state != StudentState.TargetFound) {
@@ -85,10 +74,6 @@ public class Student {
             1f, 1f,
             rotation
         );
-    }
-
-    public float getRadius() {
-        return size / 2f;
     }
 
     public StudentState getState() {

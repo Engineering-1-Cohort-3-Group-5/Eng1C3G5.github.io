@@ -97,7 +97,7 @@ public class Player {
     }
 
     public void render(SpriteBatch batch){
-      // Centred around x and y
+        // Centred around x and y
         batch.draw(playerTexture,body.getX()-size/2f, body.getY()-size/2f, size, size);
     }
 

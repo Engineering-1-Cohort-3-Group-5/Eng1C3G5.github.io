@@ -15,13 +15,14 @@ import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.students.StudentManager;
+import eng.project.entity.mushrooms.MushroomManager;
 import eng.project.inventory.Inventory;
 import eng.project.inventory.Fan;
 import eng.project.inventory.Whistle;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
 import com.badlogic.gdx.InputAdapter;
-import eng.project.inventory.Item;
+import eng.project.ui.TimerGui;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -38,10 +39,13 @@ public class GameScreen extends ScreenAdapter {
     private final FoodManager foodManager;
     private final Fan fan;
     private final Whistle whistle;
+    private final MushroomManager mushroomManager;
     private final Gui gui = new Gui();
+    private final TimerGui timerGui = new TimerGui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
     private GameState state = GameState.Play;
+    private float timeRemaining = 300f;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
@@ -51,17 +55,22 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
-        /*placeholder image assets for fan and whistle*/
-        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class)));
+
+        mushroomManager = new MushroomManager(
+            new TextureRegion(assets.get("mushroom.png", Texture.class)),
+            map
+        );
+
+        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class
+        )));
         whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("food.png", Texture.class)));
         inventory.add(fan);
         inventory.add(whistle);
+
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
                     ".png", Texture.class)), collisionHandler);
-
-        // Mouse wheel scrolls the hotbar selection
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
@@ -105,13 +114,20 @@ public class GameScreen extends ScreenAdapter {
         switch (state) {
             case Play -> {
                 handleInventoryInput();
+                // Count down while the game is running.
+                timeRemaining = Math.max(0f, timeRemaining - delta);
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
                 fan.update(delta);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();
-                camera.update(player.getX(), player.getY());
+                mushroomManager.update(delta, player.getX(), player.getY());
+                camera.update(
+                    player.getX(),
+                    player.getY(),
+                    mushroomManager.isDizzy()
+                );
             }
             case Pause -> {
                 // Pause-menu input will be handled here when it is implemented.
@@ -119,14 +135,13 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    /** Number keys 1-5 select a hotbar slot; E uses the selected item  */
-    private void handleInventoryInput() {
+    public void handleInventoryInput() {
         for (int i = 0; i < Inventory.size; i++) {
-            if (Gdx.input.isKeyJustPressed((Input.Keys.NUM_1 + i))) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)) {
                 inventory.select(i);
             }
         }
-        if (Gdx.input.isKeyJustPressed((Input.Keys.E))) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             inventory.useSelected();
         }
     }
@@ -139,14 +154,18 @@ public class GameScreen extends ScreenAdapter {
         // A paused game still shows the current world behind its future pause UI.
         map.render_back(batch);
         foodManager.render(batch);
+        mushroomManager.render(batch);
         geeseManager.render(batch);
         studentManager.render(batch);
         player.render(batch);
         map.render_front(batch);
+
         batch.end();
-        // HUD uses its own screen camera so it is drawn after the world batch is ended
+
+        timerGui.render(batch, timeRemaining);
         gui.render(batch, inventory, player);
     }
+
 
     /** Stops simulation updates while keeping the world visible. */
     public void pauseGame() {
@@ -175,5 +194,6 @@ public class GameScreen extends ScreenAdapter {
         // Textures are disposed by AssetManager in Main.
         batch.dispose();
         gui.dispose();
+        timerGui.dispose();
     }
 }
