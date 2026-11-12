@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import eng.project.Main;
 import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
@@ -16,13 +17,15 @@ public class Map {
     private final Texture borderTexture;
     private static final float width = 120f;
     private static final float height = 100f;
-    private static final ArrayList<Feature> mapFeatures =
-        new ArrayList<>();
+    private final Bus bus;
+    private static final ArrayList<Feature> mapFeatures = new ArrayList<>();
+
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(AssetManager assets, CollisionHandler collisionHandler){
         this.mapTexture = assets.get("world/map.png",Texture.class);
         this.borderTexture = assets.get("world/border.png",Texture.class);
 
+        bus = new Bus(-22,-36,assets.get("world/bus.png",Texture.class),collisionHandler);
 
         // Generate map structures here
 
@@ -61,13 +64,13 @@ public class Map {
         // Bushes
         Texture bushesTexture = assets.get("world/bushes.png",Texture.class);
 
-        TextureRegion[] treeTypes = {
+        TextureRegion[] bushTypes = {
             new TextureRegion(bushesTexture,0,0,118,118),
             new TextureRegion(bushesTexture,118,18,100,100),
             new TextureRegion(bushesTexture,225,0,118,118)
         };
 
-        float[][] treePositions = {
+        float[][] bushPositions = {
             {4f, 32f}, {17f, 40f}, {31f, 37f}, {47f, 34f},
             {-52f, 12f}, {-52f, -8f}, {-42f, -18f}, {-35f, -32f},
             {-16f, -40f}, {-10f, -34f}, {4f, -41f}, {19f, -37f},
@@ -76,13 +79,17 @@ public class Map {
             {-3f, 45f}, {12f, 44f}, {27f, 44f}, {43f, 43f},
         };
 
-        for (int i = 0; i < treePositions.length; i++) {
-            float[] position = treePositions[i];
+        for (int i = 0; i < bushPositions.length; i++) {
+            float[] position = bushPositions[i];
             mapFeatures.add(new Feature(
                 position[0], position[1], 3f, new Box(1f, 1f),
-                treeTypes[i % treeTypes.length], collisionHandler
+                bushTypes[i % bushTypes.length], collisionHandler
             ));
         }
+    }
+
+    public void update(Main application){
+        bus.update(application);
     }
 
     public void render_back(SpriteBatch batch){
@@ -90,6 +97,7 @@ public class Map {
     }
 
     public void render_front(SpriteBatch batch){
+        bus.render(batch);
         for (Feature feature : mapFeatures){
             feature.render(batch);
         }

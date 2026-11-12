@@ -1,122 +1,222 @@
-
 package eng.project.ui;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import eng.project.inventory.Inventory;
+import eng.project.inventory.ItemStack;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import eng.project.entity.Player;
+import com.badlogic.gdx.Gdx;
 
-/** Draws the game's retro-style timer. */
+/** Entry point for screen-space UI; add HUD elements here as the game expands. */
 public class Gui {
+    // Hotbar layout in pixels
+    private static final float slotSize = 64f;
+    private static final float slotGap = 8f;
+    private static final float border = 3f;
+    private static final float bottomMargin = 20f;
+    private static final float iconPadding = 8f;
+    // Status bar layout in pixels
+    private static final float barHeight = 18f;
+    private static final float barGap = 6f;
 
-    private final ShapeRenderer shapes = new ShapeRenderer();
-    private final BitmapFont font = new BitmapFont();
-    private final Matrix4 uiMatrix = new Matrix4();
+    private final OrthographicCamera camera = new OrthographicCamera();
+    private final ScreenViewport viewport = new ScreenViewport(camera);
 
-    private static final float GAME_TIME = 300f;
+    private final Texture pixel; // 1x1 white texture tinted to draw rectangles
+    private final BitmapFont font = new BitmapFont(); // built-in font feature
+    private final GlyphLayout layout = new GlyphLayout(); // measures text so it cant be centered correctly
+    // Item name popup
+    private static final float nameShowTime = 1.5f;
+    private int lastSelectedIndex = 0;
+    private float nameTimer = 0f;
+    // Health bar damage effects
+    private static final float flashTime = 0.25f;
+    private static final float trailSpeed = 40f;
+    private float lastHealth = -1f;
+    private float trailHealth = -1f;
+    private float flashTimer = 0f;
 
-    private final Color cream = new Color(1f, 0.98f, 0.94f, 1f);
-    private final Color coral = new Color(1f, 0.39f, 0.39f, 1f);
-    private final Color black = Color.BLACK;
+    public Gui() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        pixel = new Texture(pixmap);
+        pixmap.dispose();
+    }
 
-    /** Draws the timer in the top-left corner. */
-    public void render(SpriteBatch batch, float timeRemaining) {
+    /** Draws the HUD, must be called after the world batch has ended as its switches to screen space camera */
+    public void render(SpriteBatch batch, Inventory inventory, Player player){
+        float delta = Gdx.graphics.getDeltaTime();
+        updateEffects(delta, inventory, player);
 
-        int height = Gdx.graphics.getHeight();
-        int width = Gdx.graphics.getWidth();
-
-        uiMatrix.setToOrtho2D(0, 0, width, height);
-        shapes.setProjectionMatrix(uiMatrix);
-
-        float x = 15;
-        float y = height - 110;
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Small shadow behind the timer.
-        shapes.setColor(black);
-        shapes.rect(x + 5, y - 5, 205, 95);
-
-        // Black border and cream background.
-        shapes.rect(x, y, 205, 95);
-        shapes.setColor(cream);
-        shapes.rect(x + 4, y + 4, 197, 87);
-
-        // Red label decoration.
-        shapes.setColor(coral);
-        shapes.rect(x + 140, y + 70, 50, 13);
-
-        // Timer progress bar.
-        float progress = Math.max(0f, timeRemaining / GAME_TIME);
-
-        shapes.setColor(black);
-        shapes.rect(x + 15, y + 12, 175, 12);
-
-        shapes.setColor(coral);
-        shapes.rect(x + 18, y + 15, 169 * progress, 6);
-
-        // Draw sharp pixel numbers.
-        int totalSeconds = (int) Math.ceil(timeRemaining);
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-
-        String time = String.format("%02d:%02d", minutes, seconds);
-
-        drawPixelTime(time, x + 49, y + 35);
-
-        shapes.end();
-
-        // Small label using the default font at native size.
-        batch.setProjectionMatrix(uiMatrix);
+        viewport.apply();
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        font.setColor(black);
-        font.draw(batch, "TIME LEFT", x + 15, y + 82);
+        renderStatusBars(batch, player);
+        renderHotbar(batch, inventory);
+        renderItemName(batch, inventory);
         batch.end();
     }
 
-    /** Draws the countdown using square pixels. */
-    private void drawPixelTime(String time, float x, float y) {
+    /** Updates the timers for the item name popup, damage and health trails */
+    private void updateEffects(float delta, Inventory inventory, Player player) {
+        if (inventory.getSelectedIndex() != lastSelectedIndex) {
+            lastSelectedIndex = inventory.getSelectedIndex();
+            nameTimer = nameShowTime;
+        }
+        if (nameTimer > 0f) {
+            nameTimer -= delta;
+        }
 
-        float pixelSize = 4f;
+        float health = player.getHealth();
+        if (lastHealth < 0f) {
+            lastHealth = health;
+            trailHealth = health;
+        }
 
-        for (int i = 0; i < time.length(); i++) {
-            String pattern = getDigitPattern(time.charAt(i));
+        if (health < lastHealth) {
+            flashTimer = flashTime;
+        }
+        lastHealth = health;
+        if (flashTimer > 0f) {
+            flashTimer -= delta;
+        }
 
-            for (int j = 0; j < pattern.length(); j++) {
-                if (pattern.charAt(j) == '1') {
-                    float px = x + i * 22 + (j % 3) * pixelSize;
-                    float py = y + (4 - j / 3) * pixelSize;
+        if (trailHealth > health) {
+            trailHealth -= trailSpeed * delta;
+            if ( trailHealth < health) {
+                trailHealth = health;
+            }
+        } else {
+            trailHealth = health;
+        }
 
-                    shapes.setColor(black);
-                    shapes.rect(px, py, pixelSize, pixelSize);
-                }
+    }
+
+    /** Health and stamina bars stacked just above hotbar */
+    private void renderStatusBars(SpriteBatch batch, Player player) {
+        float width = Inventory.size * slotSize + (Inventory.size - 1) * slotGap;
+        float x = (viewport.getWorldWidth() - width) / 2f;
+
+        float staminaY = bottomMargin + slotSize + border + barGap + border;
+        float healthY = staminaY + barHeight + barGap;
+
+        float healthFraction = player.getHealth() / player.getMaxStamina();
+        drawBar(batch, x, healthY, width, player.getHealth(), trailHealth, player.getMaxHealth(), getHealthColour(healthFraction));
+        Color staminaColour = Color.SKY;
+        if (player.isExhausted()) {
+            staminaColour = Color.GRAY;
+        }
+        drawBar(batch, x, staminaY, width, player.getStamina(), player.getStamina(), player.getMaxStamina(), staminaColour);
+    }
+
+    /** Green when healthy, orange when hurt, red when low, and white briefly when damaged */
+    private Color getHealthColour(float fraction) {
+        if (flashTimer > 0f) {
+            return Color.WHITE;
+        }
+        if (fraction > 0.6f) {
+            return Color.GREEN;
+        }
+        if (fraction > 0.3f) {
+            return Color.ORANGE;
+        }
+        return Color.RED;
+    }
+
+    /** Draws a bar filled to value/max, with a trail showing recently lost value and the number in the center */
+    private void drawBar(SpriteBatch batch, float x, float y, float width, float value, float trailValue, float max, Color fillColour) {
+        float fraction = Math.max(0f, Math.min(1f, value / max));
+        float trailFraction = Math.max(0f, Math.min(1f, trailValue / max));
+
+        batch.setColor(0.1f, 0.1f, 0.1f, 1f);
+        batch.draw(pixel, x - border, y - border, width + 2 * border, barHeight + 2 * border);
+
+        batch.setColor(Color.LIGHT_GRAY);
+        batch.draw(pixel, x, y, width * trailFraction, barHeight);
+
+        batch.setColor(fillColour);
+        batch.draw(pixel, x, y, width * fraction, barHeight);
+        batch.setColor(Color.WHITE);
+
+        String text = Math.round(value) + " / " + Math.round(max);
+        layout.setText(font, text);
+        float textX = x + (width - layout.width) / 2f;
+        float textY = y + (barHeight + layout.height) / 2f;
+        font.draw(batch, text, textX, textY);
+    }
+    /** Hotbar slots centered at the bottom of the screen with slot numbers, item icons and stack counts*/
+    private void renderHotbar(SpriteBatch batch, Inventory inventory) {
+        float totalWidth = Inventory.size * slotSize + (Inventory.size - 1) * slotGap;
+        float startX = (viewport.getWorldWidth() - totalWidth) / 2f;
+        float y = bottomMargin;
+
+        for (int i = 0; i < Inventory.size; i++) {
+            float x = startX + i * (slotSize + slotGap);
+            boolean selected = i == inventory.getSelectedIndex();
+
+            if (selected) {
+                batch.setColor(Color.GOLD);
+            } else {
+                batch.setColor(Color.DARK_GRAY);
+            }
+            batch.draw(pixel, x - border, y - border, slotSize + 2 * border, slotSize + 2 * border);
+
+            batch.setColor(0.12f, 0.12f, 0.12f, 1f);
+            batch.draw(pixel, x, y, slotSize, slotSize);
+            batch.setColor(Color.WHITE);
+            font.draw(batch, String.valueOf(i + 1), x + 4f, y + slotSize - 4f);
+
+            ItemStack stack = inventory.get(i);
+            if (stack == null) {
+                continue;
+            }
+
+            if (stack.getItem().getIcon() != null) {
+                batch.draw(stack.getItem().getIcon(), x + iconPadding, y + iconPadding, slotSize - 2 * iconPadding, slotSize - 2 * iconPadding);
+            }
+
+            if (stack.getCount() > 1) {
+                font.draw(batch, String.valueOf(stack.getCount()), x + slotSize - 16f, y + 18f);
             }
         }
+        batch.setColor(Color.WHITE);
     }
 
-    /** Returns a small pixel pattern for each number. */
-    private String getDigitPattern(char digit) {
-        return switch (digit) {
-            case '0' -> "111101101101111";
-            case '1' -> "010110010010111";
-            case '2' -> "111001111100111";
-            case '3' -> "111001111001111";
-            case '4' -> "101101111001001";
-            case '5' -> "111100111001111";
-            case '6' -> "111100111101111";
-            case '7' -> "111001001001001";
-            case '8' -> "111101111101111";
-            case '9' -> "111101111001111";
-            case ':' -> "000010000010000";
-            default -> "000000000000000";
-        };
+    /** Shows the selected items name at the bottom of the screen after switching slots and fades out over time */
+    private void renderItemName(SpriteBatch batch, Inventory inventory) {
+        ItemStack stack = inventory.getSelectedStack();
+        if (nameTimer <= 0f || stack == null) {
+            return;
+        }
+
+        float alpha = Math.min(1f, nameTimer / 0.5f);
+        String name = stack.getItem().getName();
+        layout.setText(font, name);
+
+        float barsTop = bottomMargin + slotSize + border + 2 * (barGap + border + barHeight);
+        float x = (viewport.getWorldWidth() - layout.width) / 2f;
+        float y = barsTop + 8f + layout.height;
+
+        font.setColor(1f, 1f, 1f, alpha);
+        font.draw(batch, name, x ,y);
+        font.setColor(Color.WHITE);
     }
 
-    /** Releases the interface resources. */
+    /** Keeps the HUD camera matched to the window size */
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
+
+    /** Releases the textures and font created by the GUI */
     public void dispose() {
-        shapes.dispose();
+        pixel.dispose();
         font.dispose();
     }
 }

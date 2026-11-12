@@ -24,7 +24,7 @@ public class Goose {
     /** Creates a goose with randomized visual size, movement speed, and sight range. */
     public Goose(float spawnX, float spawnY, TextureRegion texture, CollisionHandler collisionHandler){
         // Add some random variation to their stats
-        speed = MathUtils.random(0.5f, 2.5f);
+        speed = MathUtils.random(1f, 2.5f);
         size = MathUtils.random(0.8f, 1.2f);
         sightDistance2 = MathUtils.random(64, 144); // Squared distance the goose can see, a minor optimisation to avoid multiplications
 
@@ -102,6 +102,12 @@ public class Goose {
             rotation
         );
     }
+    public void changeState(GooseState newState){
+        state = newState;
+    }
+    public void changeTimer(float newTime){
+        reTargetTimer = newTime;
+    };
 
     public float getX() {
         return body.getX();
@@ -110,15 +116,4 @@ public class Goose {
     public float getY() {
         return body.getY();
     }
-
-    public float getRadius(){
-        return size/2f;
-    }
-
-    public void changeState(GooseState newState){
-        state = newState;
-    }
-    public void changeTimer(float newTime){
-        reTargetTimer = newTime;
-    };
 }
