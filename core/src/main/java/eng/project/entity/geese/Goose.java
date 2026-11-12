@@ -29,7 +29,8 @@ public class Goose {
         sightDistance2 = MathUtils.random(64, 144); // Squared distance the goose can see, a minor optimisation to avoid multiplications
 
         gooseTexture = texture;
-        body = new ColliderBody(this,spawnX,spawnY,false, new Circle(size/2f));
+        body = new ColliderBody(this,spawnX,spawnY,false,
+            new Circle(size/2f), true);
         collisionHandler.add(body);
     }
     /** Periodically selects the highest-priority visible target. */
@@ -100,5 +101,19 @@ public class Goose {
             1f, 1f,
             rotation
         );
+    }
+    public void changeState(GooseState newState){
+        state = newState;
+    }
+    public void changeTimer(float newTime){
+        reTargetTimer = newTime;
+    };
+
+    public float getX() {
+        return body.getX();
+    }
+
+    public float getY() {
+        return body.getY();
     }
 }

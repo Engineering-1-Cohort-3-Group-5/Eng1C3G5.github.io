@@ -62,4 +62,8 @@ public class GeeseManager {
             goose.render(batch);
         }
     }
+
+    public ArrayList<Goose> getGeese(){
+        return geese;
+    }
 }

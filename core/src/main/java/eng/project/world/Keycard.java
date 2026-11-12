@@ -17,7 +17,7 @@ public class Keycard {
 
     public Keycard(TextureRegion texture, CollisionHandler collisionHandler){
         this.texture = texture;
-        pickupTrigger = new ColliderBody(this,30,25,true,new Circle(0.5f));
+        pickupTrigger = new ColliderBody(this,30,25,true,new Circle(0.5f),false);
         collisionHandler.add(pickupTrigger);
     }
 

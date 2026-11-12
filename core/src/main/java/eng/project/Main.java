@@ -28,6 +28,8 @@ public class Main extends com.badlogic.gdx.Game {
         assets.load("world/border.png", Texture.class);
         assets.load("world/bus.png", Texture.class);
 
+        assets.load("mushroom.png", Texture.class);
+        assets.load("wind.png", Texture.class);
         assets.finishLoading();
 
         showMainMenu();

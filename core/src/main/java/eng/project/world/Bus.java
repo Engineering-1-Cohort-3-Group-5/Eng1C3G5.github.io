@@ -13,7 +13,7 @@ public class Bus {
     private final float width = 5;
     private final float height = 10;
     public Bus(float x, float y, Texture texture, CollisionHandler collisionHandler){
-        body = new ColliderBody(this,x,y,false,new Box(width/2,height/2));
+        body = new ColliderBody(this,x,y,false,new Box(width/2,height/2),false);
         collisionHandler.add(body);
         this.texture = new TextureRegion(texture);
     }

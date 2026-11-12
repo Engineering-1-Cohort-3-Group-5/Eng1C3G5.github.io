@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.Main;
+import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Box;
 import eng.project.collisions.CollisionHandler;
 
@@ -16,8 +17,9 @@ public class Map {
     private final Texture borderTexture;
     private static final float width = 120f;
     private static final float height = 100f;
-    private final ArrayList<Feature> mapFeatures = new ArrayList<>();
     private final Bus bus;
+    private static final ArrayList<Feature> mapFeatures = new ArrayList<>();
+
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(AssetManager assets, CollisionHandler collisionHandler){
         this.mapTexture = assets.get("world/map.png",Texture.class);
@@ -110,4 +112,48 @@ public class Map {
     public static float getHeight(){
         return height;
     }
+
+    public static Feature getOneMapFeature(){
+        if (mapFeatures.isEmpty()){
+            return null;
+        }
+        int index = MathUtils.random(mapFeatures.size() - 1);
+        return mapFeatures.get(index);
+    }
+
+
+    public boolean canSpawnMushroom(float x, float y) {
+
+        // keep mushrooms inside the map
+        if (x < -19 || x > 19 || y < -19 || y > 19) {
+            return false;
+        }
+
+        // check if mushroom is inside a building
+        float[][] buildings = {
+            {-10, 0, 2, 3},
+            {-2, 4, 4, 3},
+            {-15, 15, 4, 4},
+            {14, -15, 4, 1.5f},
+            {11, 11, 4, 1.5f},
+            {16, 1, 3, 3},
+            {-15, -12, 3, 5}
+        };
+
+        for (float[] building : buildings) {
+            float bx = building[0];
+            float by = building[1];
+            float width = building[2];
+            float height = building[3];
+
+            // extra space so mushrooms don't touch buildings
+            if (Math.abs(x - bx) < width + 0.5f &&
+                Math.abs(y - by) < height + 0.5f) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

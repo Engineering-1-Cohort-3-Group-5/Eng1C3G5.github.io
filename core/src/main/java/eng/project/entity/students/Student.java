@@ -6,89 +6,66 @@ import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.food.Food;
-import eng.project.entity.food.FoodManager;
-import eng.project.entity.food.FoodTarget;
-import eng.project.entity.geese.GooseState;
+import eng.project.world.Map;
 
 public class Student {
-    private final TextureRegion studentTexture;
-    private float rotation,targetX,targetY,reTargetTimer;
-    private ColliderBody body;
-    private final float speed, size,sightDistance2;
-    private StudentState state = StudentState.Spawning;
 
-    /** Creates a goose with randomized visual size, movement speed, and sight range. */
-    public Student(float spawnX, float spawnY, TextureRegion texture, CollisionHandler collisionHandler){
+    private static final float mapWidth = Map.getWidth();
+    private static final float mapHeight = Map.getHeight();
+    private static final float targetX =
+        MathUtils.random((-mapWidth) / 2f, mapWidth / 2f);
+    private static final float targetY = mapHeight / 2f;
+
+
+
+    private final TextureRegion studentTexture;
+    private final float speed, size;
+    private float rotation;
+    private ColliderBody body;
+    private StudentState state = StudentState.Travelling;
+
+    /**
+     * Creates a student with set visual size, and movement speed.
+     */
+    public Student(float spawnX, float spawnY,
+                   TextureRegion texture,
+                   CollisionHandler collisionHandler) {
         // Add some random variation to their stats
-        speed = 0.5f;
-        size = 1f;
-        sightDistance2 = MathUtils.random(36f, 81f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
+        speed = 2f;
+        size = 2f;
 
         studentTexture = texture;
-        body = new ColliderBody(this,spawnX,spawnY,true, new Circle(size/2f));
+        body = new ColliderBody(this, spawnX, spawnY, false,
+            new Circle(size / 2f), true);
         collisionHandler.add(body);
     }
-    /** Periodically selects the highest-priority visible target. */
-    public void target(float playerX, float playerY, float delta, FoodManager foodManager){
-        if (reTargetTimer > 0){
-            reTargetTimer -= delta; // Tick the timer down to 0
 
-            if (state == StudentState.Leaving){ // Update moving target pos
-                targetY = playerY;
-                targetX = playerX;
-            }
-        }
-        else{
-            reTargetTimer = 0.5f; // How often the goose checks for a new target
-
-            FoodTarget closestFood = foodManager.findClosestFood(body.getX(), body.getY()); // Get nearest food
-
-            if (closestFood != null && closestFood.distance2() <= sightDistance2){ // If food exists and is within sight
-                Food food = closestFood.food();
-                // Set target as food
-                state = StudentState.Leaving;
-                targetX = food.getX();
-                targetY = food.getY();
-                return;
-            }
-            else{
-                float dx = playerX - body.getX();
-                float dy = playerY - body.getY();
-                if (dx*dx + dy*dy <= sightDistance2){ // If player within sight
-                    // Set target as player
-                    state = StudentState.Leaving;
-                    targetY = playerY;
-                    targetX = playerX;
-                    return;
-                }
-            }
-            // Idle if not after player or food
-            state = StudentState.Spawning;
-        }
-    }
-
-    /** Moves towards the current target without overshooting it. */
-    public void move(float delta){
-        if (state != StudentState.Spawning) {
-            // Get dist
+    /**
+     * Moves towards the map location, aiming to reach within 1f of
+     * it.
+     */
+    public void move(float delta) {
+        if (state != StudentState.TargetFound) {
             float dx = targetX - body.getX();
             float dy = targetY - body.getY();
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
-            // Return if already touching
-            if (distance < 0.0001f) return;
-
             // Move toward target without overshooting
             float step = Math.min(speed * delta, distance);
-            body.push(dx / distance * step,dy / distance * step);
+            body.push(dx / distance * step, dy / distance * step);
 
-            // Calculate angle in degrees (plus offset to line up sprite)
-            rotation = -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
+            // Calculate angle in degrees (plus offset to line up
+            // sprite)
+            rotation =
+                -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
+
+            if (distance < 1f) {
+                state = StudentState.TargetFound;
+            }
         }
     }
 
-    public void render(SpriteBatch batch){
+    public void render(SpriteBatch batch) {
         batch.draw(
             studentTexture,
             body.getX() - size / 2f, body.getY() - size / 2f,
@@ -99,8 +76,12 @@ public class Student {
         );
     }
 
-    public float getRadius(){
-        return size/2f;
+    public StudentState getState() {
+        return state;
+    }
+
+    public ColliderBody getBody() {
+        return body;
     }
 }
 
