@@ -62,7 +62,7 @@ public class GameScreen extends ScreenAdapter {
         );
 
         fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class
-        )));
+        )), new TextureRegion(assets.get("wind.png", Texture.class)));
         whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("food.png", Texture.class)));
         inventory.add(fan);
         inventory.add(whistle);
@@ -158,6 +158,7 @@ public class GameScreen extends ScreenAdapter {
         geeseManager.render(batch);
         studentManager.render(batch);
         player.render(batch);
+        fan.render(batch);
         map.render_front(batch);
 
         batch.end();
