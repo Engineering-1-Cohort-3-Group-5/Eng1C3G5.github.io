@@ -55,24 +55,25 @@ public class Student {
      *Student moves towards the target.
      */
     public void move(float delta) {
-        if (state != StudentState.TargetFound) {
-            float dx = targetX - body.getX();
-            float dy = targetY - body.getY();
-            float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
-            // Move toward target without overshooting
-            float step = Math.min(speed * delta, distance);
-            body.push(dx / distance * step, dy / distance * step);
-
-            // Calculate angle in degrees (plus offset to line up
-            // sprite)
-            rotation =
-                -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
-
-            if (distance < 1f) {
-                state = StudentState.TargetFound;
-            }
+        if (state == StudentState.TargetFound) {
+            return;
         }
+        float dx = targetX - body.getX();
+        float dy = targetY - body.getY();
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 2f) {
+            state = StudentState.TargetFound;
+            return;
+        }
+
+        // Move toward target without overshooting
+        float step = Math.min(speed * delta, distance);
+        body.push(dx / distance * step, dy / distance * step);
+
+        // Calculate angle in degrees (plus offset to line up
+        // sprite)
+        rotation = -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
     }
 
     /**

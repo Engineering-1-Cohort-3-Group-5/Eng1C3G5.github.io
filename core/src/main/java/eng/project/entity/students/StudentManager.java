@@ -21,12 +21,12 @@ public class StudentManager {
 
     private final Feature building = Map.studentStartBuilding();
     private final float spawnX =
-        building.getX() ;
+        building.getX();
     private final float spawnY =
         building.getY() + building.getHalfHeight();
 
     private float spawnTimer = 1f;
-    private int studentCount = 5;
+    private int studentCount = 30;
 
     private final CollisionHandler collisionHandler;
     private final ArrayList<ColliderBody> colliders;

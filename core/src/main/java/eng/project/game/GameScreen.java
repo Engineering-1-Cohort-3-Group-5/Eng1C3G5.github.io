@@ -104,7 +104,7 @@ public class GameScreen extends ScreenAdapter {
 
                 //Starts student hidden event when three minutes
                 // remain.
-                if (timeRemaining <= 290f) {
+                if (timeRemaining <= 180f) {
                     studentManager.generateStudents(delta);
                 }
                 foodManager.update(delta, player.getX(), player.getY());
