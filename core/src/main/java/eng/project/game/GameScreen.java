@@ -133,6 +133,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.resize(width, height);
+        //gui.camera.resize(width, height);
     }
 
     /** Releases rendering resources owned by this screen. */

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import eng.project.game.CameraController;
 import eng.project.game.GameScreen;
 import eng.project.game.GameState;
 
@@ -24,13 +25,15 @@ import static com.badlogic.gdx.Input.Keys.ESCAPE;
 public class Gui {
     private final Texture buttonTexture = new Texture("pause.png");
     private final SpriteBatch buttonBatch = new SpriteBatch();
+    public CameraController camera = new CameraController();
     public Gui(Pause pauseRunner, Play playRunner){
         pauseButton(pauseRunner, playRunner);
     }
     public void render(){
         // Draw ui elements here
+        //buttonBatch.setProjectionMatrix(camera.getMatrix());
         buttonBatch.begin();
-        buttonBatch.draw(buttonTexture, 100, 100, 50, 50);
+        buttonBatch.draw(buttonTexture, 20, 400, 50, 50);
         buttonBatch.end();
     }
     private final Stage stage = new Stage();
@@ -89,7 +92,7 @@ public class Gui {
         Texture buttonTexture = new Texture("pause.png");
         Sprite buttonSprite = new Sprite(buttonTexture);
         ImageButton pauseButton = new ImageButton(new SpriteDrawable(buttonSprite));
-        pauseButton.setPosition(100, 100);
+        pauseButton.setPosition(20, 400);
         pauseButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -110,7 +113,7 @@ public class Gui {
         Texture buttonTexture = new Texture("play.png");
         Sprite buttonSprite = new Sprite(buttonTexture);
         ImageButton playButton = new ImageButton(new SpriteDrawable(buttonSprite));
-        playButton.setPosition(100, 100);
+        playButton.setPosition(20, 400);
         playButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
