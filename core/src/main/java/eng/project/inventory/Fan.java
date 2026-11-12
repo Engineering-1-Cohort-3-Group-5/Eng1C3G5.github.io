@@ -2,11 +2,13 @@ package eng.project.inventory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import eng.project.collisions.Box;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
 import eng.project.entity.Player;
 import eng.project.game.CameraController;
+
 
 
 public class Fan extends Item{
@@ -15,6 +17,7 @@ public class Fan extends Item{
     private Player player;
     private ItemState state = ItemState.Usable;
     private final CameraController camera;
+    private final TextureRegion windTexture;
     private float directionX;
     private float directionY;
     private float timeRemaining;
@@ -26,11 +29,12 @@ public class Fan extends Item{
     private float rechargeTime = 10;
 
 
-    public Fan(CollisionHandler collisionHandler, Player player, CameraController camera, String name, TextureRegion icon){
+    public Fan(CollisionHandler collisionHandler, Player player, CameraController camera, String name, TextureRegion icon, TextureRegion windTexture){
         super(name, icon);
         this.collisionHandler = collisionHandler;
         this.player = player;
         this.camera = camera;
+        this.camera = windTexture;
     }
 
     @Override
@@ -87,9 +91,25 @@ public class Fan extends Item{
             collisionHandler.remove(windBody);
             windBody = null;
         }
+        
 
+    public void render(SpriteBatch batch){
+        if (windbody == null){
+            return;
+        }
+
+        
+        float rotation = (float) Math.toDegrees(Math.atan2(directionY, directionX));
+    
+        batch.draw(
+            windTexture,
+            windBody.getX() - 0.5f, windBody.getY() - 0.5f,
+            0.5f, 0.5f,
+            1f, 1f,
+            1f, 1f,
+            rotation
+        );
     }
-
     public void pushGoose(ColliderBody gooseBody){
         float dx = gooseBody.getX() - originX;
         float dy = gooseBody.getY() - originY;
