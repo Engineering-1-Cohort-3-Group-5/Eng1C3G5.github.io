@@ -21,6 +21,8 @@ import eng.project.inventory.Fan;
 import eng.project.inventory.Whistle;
 import eng.project.ui.Gui;
 import eng.project.world.Map;
+import com.badlogic.gdx.InputAdapter;
+import eng.project.ui.TimerGui;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -39,6 +41,7 @@ public class GameScreen extends ScreenAdapter {
     private final Whistle whistle;
     private final MushroomManager mushroomManager;
     private final Gui gui = new Gui();
+    private final TimerGui timerGui = new TimerGui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
     private GameState state = GameState.Play;
@@ -52,17 +55,29 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+
         mushroomManager = new MushroomManager(
             new TextureRegion(assets.get("mushroom.png", Texture.class)),
             map
         );
 
-        fan = new Fan(collisionHandler, player, camera);
-        whistle = new Whistle(player, geeseManager);
+        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class
+        )));
+        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("food.png", Texture.class)));
+        inventory.add(fan);
+        inventory.add(whistle);
+
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
                     ".png", Texture.class)), collisionHandler);
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean scrolled(float amountX, float amountY) {
+                inventory.scroll((int) Math.signum(amountY));
+                return true;
+            }
+        });
     }
 
     /** Updates and draws this screen once per frame. */
@@ -98,19 +113,12 @@ public class GameScreen extends ScreenAdapter {
     private void update(float delta) {
         switch (state) {
             case Play -> {
+                handleInventoryInput();
                 // Count down while the game is running.
                 timeRemaining = Math.max(0f, timeRemaining - delta);
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
-                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                    System.out.println(("F key pressed"));
-                    fan.Use();
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-                    System.out.println(("G key pressed"));
-                    whistle.Use();
-                }
                 fan.update(delta);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();
@@ -126,6 +134,18 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+
+    public void handleInventoryInput() {
+        for (int i = 0; i < Inventory.size; i++) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)) {
+                inventory.select(i);
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            inventory.useSelected();
+        }
+    }
+
     /** Draws the world back-to-front using the current camera. */
     private void renderWorld() {
         batch.setProjectionMatrix(camera.getMatrix());
@@ -142,8 +162,8 @@ public class GameScreen extends ScreenAdapter {
 
         batch.end();
 
-        // Draw the timer in the top-left corner.
-        gui.render(batch, timeRemaining);
+        timerGui.render(batch, timeRemaining);
+        gui.render(batch, inventory, player);
     }
 
 
@@ -165,13 +185,15 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.resize(width, height);
+        gui.resize(width, height);
     }
 
     /** Releases rendering resources owned by this screen. */
     @Override
     public void dispose() {
         // Textures are disposed by AssetManager in Main.
-        // gui.dispose();
         batch.dispose();
+        gui.dispose();
+        timerGui.dispose();
     }
 }

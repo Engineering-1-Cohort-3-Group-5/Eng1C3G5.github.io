@@ -1,5 +1,6 @@
 package eng.project.inventory;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.entity.geese.Goose;
 import eng.project.entity.geese.GeeseManager;
 import eng.project.entity.geese.GooseState;
@@ -17,13 +18,14 @@ public class Whistle extends Item{
     private GeeseManager manager;
     private Player player;
 
-    public Whistle(Player player, GeeseManager manager){
+    public Whistle(Player player, GeeseManager manager, String name, TextureRegion icon){
+        super(name, icon);
         this.manager = manager;
         this.player = player;
     }
 
     @Override
-    public void Use(){
+    public boolean Use(){
         float playerX = player.getX();
         float playerY = player.getY();
         ArrayList<Goose> geeseList = manager.getGeese();
@@ -40,6 +42,7 @@ public class Whistle extends Item{
             }
         }
         state = ItemState.Recharging;
+        return false;
     }
 
     @Override
