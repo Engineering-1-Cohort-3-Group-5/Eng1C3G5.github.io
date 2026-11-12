@@ -35,7 +35,7 @@ public class Inventory {
         if (stack == null) {
             return;
         }
-        if (stack.getItem().use()) {
+        if (stack.getItem().Use()) {
             stack.decrease();
             if (stack.isEmpty()) {
                 slots[selectedIndex] = null;

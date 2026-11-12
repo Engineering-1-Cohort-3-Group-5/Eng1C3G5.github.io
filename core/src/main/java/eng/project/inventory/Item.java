@@ -10,17 +10,12 @@ public abstract class Item {
     private float rechargeTime;
     private ItemState state;
 
-    private final String name;
-    private final TextureRegion icon;
+    private String name;
+    private TextureRegion icon;
 
-    public abstract void Use();
+    public abstract boolean Use();
     /* If an item is in Recharging state, this should be called periodically to make it usable*/
     public abstract void Recharge();
-
-    protected Item(String name, TextureRegion icon) {
-        this.name = name;
-        this.icon = icon;
-    }
 
     public String getName() {
         return name;
@@ -38,5 +33,5 @@ public abstract class Item {
         return other != null && getClass() == other.getClass() && name.equals(other.name);
     }
 
-    public abstract boolean use();
+    //public abstract boolean use();
 }

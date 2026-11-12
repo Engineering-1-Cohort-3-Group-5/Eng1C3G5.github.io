@@ -1,5 +1,6 @@
 package eng.project.inventory;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import eng.project.collisions.Box;
 import eng.project.collisions.ColliderBody;
@@ -14,6 +15,8 @@ public class Fan extends Item{
     private Player player;
     private ItemState state = ItemState.Usable;
     private final CameraController camera;
+    private String name;
+    private TextureRegion icon;
     private float directionX;
     private float directionY;
     private float timeRemaining;
@@ -25,14 +28,16 @@ public class Fan extends Item{
     private float rechargeTime = 10;
 
 
-    public Fan(CollisionHandler collisionHandler, Player player, CameraController camera){
+    public Fan(CollisionHandler collisionHandler, Player player, CameraController camera, String name, TextureRegion icon){
         this.collisionHandler = collisionHandler;
         this.player = player;
         this.camera = camera;
+        this.name = name;
+        this.icon = icon;
     }
 
     @Override
-    public void Use(){
+    public boolean Use(){
         Vector2 mousePos = camera.getWorldPosition(Gdx.input.getX(), Gdx.input.getY());
         float targetX = mousePos.x;
         float targetY = mousePos.y;
@@ -49,7 +54,7 @@ public class Fan extends Item{
 
 
         if(length < 0.0001f){
-            return;
+            return true;
         }
 
         directionX = dx / length;
@@ -67,6 +72,7 @@ public class Fan extends Item{
         System.out.println("Fan used wind collider created");
         timeRemaining = 0.75f; //blast lasts for 0.75 seconds, can be changed, distance = speed * time
         pushStep = 0f;
+        return true;
     }
 
     public void update(float delta){

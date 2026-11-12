@@ -51,8 +51,9 @@ public class GameScreen extends ScreenAdapter {
         geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
-        fan = new Fan(collisionHandler, player, camera);
-        whistle = new Whistle(player, geeseManager);
+        /*placeholder image assets for fan and whistle*/
+        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class)));
+        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("food.png", Texture.class)));
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
