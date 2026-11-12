@@ -14,7 +14,7 @@ public class CameraController {
 
     public CameraController (){
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(20, 15, camera);
+        viewport = new ExtendViewport(150, 150, camera);
     }
     /** Moves the camera towards the follow target and refreshes its projection matrix. */
 

@@ -43,6 +43,7 @@ public class GameScreen extends ScreenAdapter {
     private final CollisionHandler collisionHandler = new CollisionHandler();
     private GameState state = GameState.Play;
     private float timeRemaining = 300f;
+    private boolean studentEvent = false;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
@@ -100,6 +101,12 @@ public class GameScreen extends ScreenAdapter {
             case Play -> {
                 // Count down while the game is running.
                 timeRemaining = Math.max(0f, timeRemaining - delta);
+
+                //Starts student hidden event when three minutes
+                // remain.
+                if (timeRemaining <= 290f) {
+                    studentManager.generateStudents(delta);
+                }
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);

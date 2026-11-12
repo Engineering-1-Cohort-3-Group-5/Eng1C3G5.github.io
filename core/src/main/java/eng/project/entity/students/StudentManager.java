@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.geese.Goose;
 import eng.project.world.Feature;
 import eng.project.world.Map;
 
@@ -15,19 +14,17 @@ public class StudentManager {
 
     private final TextureRegion studentTexture;
 
-    private final Feature building = Map.getOneMapFeature();
+    private final Feature buildingDimensions = Map.getB4Dimensions();
+
     private final float spawnX =
-        building.getX() + building.getHalfWidth();
+        building.getX() + bu;
     private final float spawnY =
         building.getY() + building.getHalfHeight();
+
     private final CollisionHandler collisionHandler;
-    private float spawnTimer = 1f;
-    private int studentCount = 30;
-    private ArrayList<ColliderBody> colliders;
-
-    private float delta = Gdx.graphics.getDeltaTime();
-
-
+    private float spawnTimer = 1.5f;
+    private int studentCount = 5;
+    private final ArrayList<ColliderBody> colliders;
 
     private ArrayList<Student> students = new ArrayList<Student>();
 
@@ -43,21 +40,19 @@ public class StudentManager {
 
     }
 
-    public void generateStudents(){
+    public void generateStudents(float delta){
         spawnTimer -= delta;
 
-        if (spawnTimer <= 0f && studentCount > 0) {
+        if (spawnTimer <= 0f && studentCount >= 0) {
             Student student = new Student(spawnX,spawnY,studentTexture,
                 collisionHandler);
             students.add(student);
-            spawnTimer = 1f;
+            spawnTimer = 1.5f;
             studentCount -= 1;
         }
     }
 
     public void update(float delta) {
-
-        generateStudents();
 
         for (Student student : students) {
             student.move(delta);
@@ -86,10 +81,6 @@ public class StudentManager {
         for (Student student : students) {
             student.render(batch);
         }
-    }
-
-    public ArrayList<Student> getStudents() {
-        return students;
     }
 
 }

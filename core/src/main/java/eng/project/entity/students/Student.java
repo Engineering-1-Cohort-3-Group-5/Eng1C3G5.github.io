@@ -21,7 +21,7 @@ public class Student {
     private final TextureRegion studentTexture;
     private final float speed, size;
     private float rotation;
-    private ColliderBody body;
+    private final ColliderBody body;
     private StudentState state = StudentState.Travelling;
 
     /**
@@ -36,7 +36,7 @@ public class Student {
 
         studentTexture = texture;
         body = new ColliderBody(this, spawnX, spawnY, false,
-            new Circle(size / 2f), true);
+            new Circle(size / 2f), false);
         collisionHandler.add(body);
     }
 

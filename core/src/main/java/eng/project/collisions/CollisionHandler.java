@@ -147,6 +147,7 @@ public class CollisionHandler {
             } else {
                 float pushY = (dy < 0f ? -overlapY : overlapY) / 2f;
 
+                // Push apart if colliders are pushable
                 colliderA.push(0f, pushY);
                 colliderB.push(0f, -pushY);
             }
@@ -181,9 +182,13 @@ public class CollisionHandler {
                 // Help them become less rigid
                 final float smooth = 0.3f;
 
-                // Push apart
-                colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                // Push apart if colliders are pushable
+                if (colliderA.getPushable()){
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                }
+                if (colliderB.getPushable()){
+                    colliderB.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                }
             }
         }
     }
