@@ -54,6 +54,8 @@ public class GameScreen extends ScreenAdapter {
         /*placeholder image assets for fan and whistle*/
         fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("food.png", Texture.class)));
         whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("food.png", Texture.class)));
+        inventory.add(fan);
+        inventory.add(whistle);
         studentManager =
             new StudentManager(new TextureRegion(assets.get(
                 "student" +
@@ -106,14 +108,6 @@ public class GameScreen extends ScreenAdapter {
                 foodManager.update(delta, player.getX(), player.getY());
                 player.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
-                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                    System.out.println(("F key pressed"));
-                    fan.Use();
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-                    System.out.println(("G key pressed"));
-                    whistle.Use();
-                }
                 fan.update(delta);
                 studentManager.update(delta);
                 collisionHandler.resolveCollisions();

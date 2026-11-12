@@ -15,8 +15,6 @@ public class Fan extends Item{
     private Player player;
     private ItemState state = ItemState.Usable;
     private final CameraController camera;
-    private String name;
-    private TextureRegion icon;
     private float directionX;
     private float directionY;
     private float timeRemaining;
@@ -29,11 +27,10 @@ public class Fan extends Item{
 
 
     public Fan(CollisionHandler collisionHandler, Player player, CameraController camera, String name, TextureRegion icon){
+        super(name, icon);
         this.collisionHandler = collisionHandler;
         this.player = player;
         this.camera = camera;
-        this.name = name;
-        this.icon = icon;
     }
 
     @Override
@@ -54,7 +51,7 @@ public class Fan extends Item{
 
 
         if(length < 0.0001f){
-            return true;
+            return false;
         }
 
         directionX = dx / length;
@@ -72,7 +69,7 @@ public class Fan extends Item{
         System.out.println("Fan used wind collider created");
         timeRemaining = 0.75f; //blast lasts for 0.75 seconds, can be changed, distance = speed * time
         pushStep = 0f;
-        return true;
+        return false;
     }
 
     public void update(float delta){

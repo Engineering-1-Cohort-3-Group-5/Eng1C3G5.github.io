@@ -17,14 +17,11 @@ public class Whistle extends Item{
     private ItemState state = ItemState.Usable;
     private GeeseManager manager;
     private Player player;
-    private String name;
-    private TextureRegion icon;
 
     public Whistle(Player player, GeeseManager manager, String name, TextureRegion icon){
+        super(name, icon);
         this.manager = manager;
         this.player = player;
-        this.name = name;
-        this.icon = icon;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class Whistle extends Item{
             }
         }
         state = ItemState.Recharging;
-        return true;
+        return false;
     }
 
     @Override
