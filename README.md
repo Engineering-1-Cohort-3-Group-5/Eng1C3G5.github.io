@@ -6,7 +6,7 @@ Architecture: https://docs.google.com/document/d/1TzoM5JcSVfVxfLRR8gTkypFC0vH2wr
 
 Planning:
 
-Implementation:
+Implementation: https://docs.google.com/document/d/1EDezyeblVpin3uCbS8wvbFe_BrENXD-KVbQLoCv0iJY/edit?usp=sharing
 
 Risks: https://docs.google.com/document/d/1OQcT9GZBgtdByeZ4WNBoPyWrezSevrTCJko1J7j-QE0/edit?usp=sharing
 
