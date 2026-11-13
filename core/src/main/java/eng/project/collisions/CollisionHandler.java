@@ -142,16 +142,30 @@ public class CollisionHandler {
             if (overlapX < overlapY) {
                 float pushX = (dx < 0f ? -overlapX : overlapX) / 2f;
 
-                colliderA.push(pushX, 0f);
-                colliderB.push(-pushX, 0f);
+                if (colliderA.getPushable() && colliderB.getPushable()) {
+                    colliderA.push(pushX, 0f);
+                    colliderB.push(-pushX, 0f);
+                } else if (colliderA.getPushable() && !colliderB.getPushable()){
+                    colliderA.push(pushX, 0f);
+                } else if (colliderB.getPushable() && !colliderA.getPushable()){
+                    colliderB.push(-pushX, 0f);
+                }
+
             } else {
                 float pushY = (dy < 0f ? -overlapY : overlapY) / 2f;
 
-                colliderA.push(0f, pushY);
-                colliderB.push(0f, -pushY);
+                if (colliderA.getPushable() && colliderB.getPushable()) {
+                    colliderA.push(0f, pushY);
+                    colliderB.push(0f, -pushY);
+                } else if (colliderA.getPushable() && !colliderB.getPushable()){
+                    colliderA.push(0f, pushY);
+                } else if (colliderB.getPushable() && !colliderA.getPushable()){
+                    colliderB.push(0f, -pushY);;
+                }
             }
         }
     }
+
     private void circleCircle(ColliderBody colliderA, Circle circleA, ColliderBody colliderB, Circle circleB) {
         // Get distance between pair
         float dx = colliderB.getX() - colliderA.getX();
