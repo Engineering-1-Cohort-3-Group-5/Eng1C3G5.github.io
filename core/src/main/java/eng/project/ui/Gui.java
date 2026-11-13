@@ -33,7 +33,7 @@ public class Gui {
         // Draw ui elements here
         //buttonBatch.setProjectionMatrix(camera.getMatrix());
         buttonBatch.begin();
-        buttonBatch.draw(buttonTexture, 20, 400, 50, 50);
+        buttonBatch.draw(buttonTexture, 550, 400, 50, 50);
         buttonBatch.end();
     }
     private final Stage stage = new Stage();
@@ -92,7 +92,7 @@ public class Gui {
         Texture buttonTexture = new Texture("pause.png");
         Sprite buttonSprite = new Sprite(buttonTexture);
         ImageButton pauseButton = new ImageButton(new SpriteDrawable(buttonSprite));
-        pauseButton.setPosition(20, 400);
+        pauseButton.setPosition(550, 400);
         pauseButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
