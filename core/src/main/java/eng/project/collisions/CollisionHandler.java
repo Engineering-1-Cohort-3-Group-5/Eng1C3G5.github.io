@@ -1,6 +1,8 @@
 package eng.project.collisions;
-
 import java.util.ArrayList;
+
+import eng.project.entity.geese.Goose;
+import eng.project.inventory.Fan;
 
 /**
  * Performs pairwise collision detection and positional resolution for registered bodies.
@@ -62,6 +64,16 @@ public class CollisionHandler {
         float dy = circleCollider.getY() - closestY;
         float distanceSquared = dx * dx + dy * dy;
 
+        if (boxCollider.getOwner() instanceof Fan wind) {
+            if (circleCollider.getOwner() instanceof Goose
+                    && distanceSquared < circle.radius() * circle.radius()) {
+                boxCollider.touching(circleCollider);
+                circleCollider.touching(boxCollider);
+                wind.pushGoose(circleCollider);
+            }
+            return;
+        }
+
         if (distanceSquared > 0f) {
             float distance = (float) Math.sqrt(distanceSquared);
             if (distance < circle.radius()) {
@@ -106,7 +118,7 @@ public class CollisionHandler {
                     normalY = 1f;
                 }
                 circleCollider.push(normalX * (nearestFaceDistance + circle.radius()),
-                    normalY * (nearestFaceDistance + circle.radius()));
+                        normalY * (nearestFaceDistance + circle.radius()));
             }
         }
     }
@@ -170,9 +182,20 @@ public class CollisionHandler {
                 final float smooth = 0.3f;
 
                 // Push apart
-                colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                if (colliderA.getPushable() && colliderB.getPushable()) {
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                } else if (colliderA.getPushable() && !colliderB.getPushable()){
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                } else  if (colliderB.getPushable() && !colliderA.getPushable()){
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                }
+
             }
         }
+    }
+
+    public ArrayList<ColliderBody> getColliders(){
+        return colliders;
     }
 }

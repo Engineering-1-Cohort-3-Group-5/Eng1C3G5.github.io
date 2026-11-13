@@ -12,19 +12,28 @@ public class ColliderBody {
     private ArrayList<Object> others = new ArrayList<>();
     private Object owner;
     private float x,y;
+    private boolean pushable;
 
     /** Creates a body at the supplied world position. Trigger behaviour is reserved for future event handling. */
-    public ColliderBody(Object owner, float x, float y, boolean isTrigger, Shape shape){
+    public ColliderBody(Object owner, float x, float y,
+                        boolean isTrigger, Shape shape,
+                        boolean pushable){
         this.owner = owner;
         this.isTrigger = isTrigger;
         this.x = x;
         this.y = y;
         this.shape = shape;
+        this.pushable = pushable;
     }
     /** Returns the shape used by {@link CollisionHandler}. */
     public Shape getShape(){
         return shape;
     }
+
+    public Object getOwner(){
+        return owner;
+    }
+
     /** Returns whether this body is intended to be a non-solid trigger. */
     public boolean isTrigger(){
         return isTrigger;
@@ -53,5 +62,10 @@ public class ColliderBody {
     public void push(float dx,float dy){
         x+=dx;
         y+=dy;
+    }
+
+    /** Returns whether an object can be pushed. */
+    public boolean getPushable(){
+        return pushable;
     }
 }

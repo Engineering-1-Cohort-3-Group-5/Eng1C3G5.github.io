@@ -3,92 +3,83 @@ package eng.project.entity.students;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.food.Food;
-import eng.project.entity.food.FoodManager;
-import eng.project.entity.food.FoodTarget;
-import eng.project.entity.geese.GooseState;
+import eng.project.world.Feature;
+import eng.project.world.Map;
 
+/**
+ * A moving student who exits a pre-selected building and travels
+ * across the map to another building at specified time.
+ */
 public class Student {
+
+    private final Feature building = Map.studentTargetBuilding();
+    private final float targetX =
+        building.getX();
+    private final float targetY =
+        building.getY() + building.getHalfHeight();
+
     private final TextureRegion studentTexture;
-    private float rotation,targetX,targetY,reTargetTimer;
-    private ColliderBody body;
-    private final float speed, size,sightDistance2;
-    private StudentState state = StudentState.Spawning;
+    private final float speed, size;
+    private final ColliderBody body;
+    private float rotation;
+    private StudentState state = StudentState.Travelling;
 
-    /** Creates a goose with randomized visual size, movement speed, and sight range. */
-    public Student(float spawnX, float spawnY, TextureRegion texture, CollisionHandler collisionHandler){
-        // Add some random variation to their stats
-        speed = 0.5f;
-        size = 1f;
-        sightDistance2 = MathUtils.random(36f, 81f); // Squared distance the goose can see, a minor optimisation to avoid multiplications
+    /**
+     *Creates a student with set speed and size.
+     * @param spawnX is the x coordinate of where student first
+     *               appears on map.
+     * @param spawnY is the y coordinate of where student first
+     *      *               appears on map.
+     * @param texture is the student appearance.
+     * @param collisionHandler dictates how student interacts with
+     *                         other objects.
+     */
+    public Student(float spawnX, float spawnY,
+                   TextureRegion texture,
+                   CollisionHandler collisionHandler) {
 
+        speed = 2f;
+        size = 2f;
         studentTexture = texture;
-        body = new ColliderBody(this,spawnX,spawnY,true, new Circle(size/2f));
+        //
+        body = new ColliderBody(this, spawnX, spawnY, false,
+            new Circle(size / 2f), false);
         collisionHandler.add(body);
     }
-    /** Periodically selects the highest-priority visible target. */
-    public void target(float playerX, float playerY, float delta, FoodManager foodManager){
-        if (reTargetTimer > 0){
-            reTargetTimer -= delta; // Tick the timer down to 0
 
-            if (state == StudentState.Leaving){ // Update moving target pos
-                targetY = playerY;
-                targetX = playerX;
-            }
+    /**
+     *Student moves towards the target.
+     */
+    public void move(float delta) {
+        if (state == StudentState.TargetFound) {
+            return;
         }
-        else{
-            reTargetTimer = 0.5f; // How often the goose checks for a new target
+        float dx = targetX - body.getX();
+        float dy = targetY - body.getY();
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
-            FoodTarget closestFood = foodManager.findClosestFood(body.getX(), body.getY()); // Get nearest food
-
-            if (closestFood != null && closestFood.distance2() <= sightDistance2){ // If food exists and is within sight
-                Food food = closestFood.food();
-                // Set target as food
-                state = StudentState.Leaving;
-                targetX = food.getX();
-                targetY = food.getY();
-                return;
-            }
-            else{
-                float dx = playerX - body.getX();
-                float dy = playerY - body.getY();
-                if (dx*dx + dy*dy <= sightDistance2){ // If player within sight
-                    // Set target as player
-                    state = StudentState.Leaving;
-                    targetY = playerY;
-                    targetX = playerX;
-                    return;
-                }
-            }
-            // Idle if not after player or food
-            state = StudentState.Spawning;
+        if (distance < 2f) {
+            state = StudentState.TargetFound;
+            return;
         }
+
+        // Move toward target without overshooting
+        float step = Math.min(speed * delta, distance);
+        body.push(dx / distance * step, dy / distance * step);
+
+        // Calculate angle in degrees (plus offset to line up
+        // sprite)
+        rotation = -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
     }
 
-    /** Moves towards the current target without overshooting it. */
-    public void move(float delta){
-        if (state != StudentState.Spawning) {
-            // Get dist
-            float dx = targetX - body.getX();
-            float dy = targetY - body.getY();
-            float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
-            // Return if already touching
-            if (distance < 0.0001f) return;
-
-            // Move toward target without overshooting
-            float step = Math.min(speed * delta, distance);
-            body.push(dx / distance * step,dy / distance * step);
-
-            // Calculate angle in degrees (plus offset to line up sprite)
-            rotation = -(float) Math.atan2(dx, dy) * MathUtils.radiansToDegrees - 90;
-        }
-    }
-
-    public void render(SpriteBatch batch){
+    /**
+     * Renders 2d graphic of current student.
+     */
+    public void render(SpriteBatch batch) {
         batch.draw(
             studentTexture,
             body.getX() - size / 2f, body.getY() - size / 2f,
@@ -99,8 +90,19 @@ public class Student {
         );
     }
 
-    public float getRadius(){
-        return size/2f;
+    /**
+     * @return the current state of the student.
+     */
+    public StudentState getState() {
+        return state;
+    }
+
+    /**
+     * Renders 2d graphic of current student.
+     * @return the interactive element of the student.
+     */
+    public ColliderBody getBody() {
+        return body;
     }
 }
 
