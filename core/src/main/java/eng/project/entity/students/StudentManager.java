@@ -1,38 +1,43 @@
 package eng.project.entity.students;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import eng.project.collisions.ColliderBody;
-import eng.project.collisions.CollisionHandler;
-import eng.project.entity.geese.Goose;
-import eng.project.world.Feature;
-import eng.project.world.Map;
 
 import java.util.ArrayList;
 
+import eng.project.collisions.ColliderBody;
+import eng.project.collisions.CollisionHandler;
+import eng.project.world.Feature;
+import eng.project.world.Map;
+
+/**
+ * Manages a hidden event where students generate by the side
+ * of a building and then travel across the map to reach
+ * another building, blocking the player's path.
+ */
 public class StudentManager {
 
     private final TextureRegion studentTexture;
 
-    private final Feature building = Map.getOneMapFeature();
+    private final Feature building = Map.studentStartBuilding();
     private final float spawnX =
-        building.getX() + building.getHalfWidth();
+        building.getX();
     private final float spawnY =
         building.getY() + building.getHalfHeight();
-    private final CollisionHandler collisionHandler;
+
     private float spawnTimer = 1f;
     private int studentCount = 30;
-    private ArrayList<ColliderBody> colliders;
 
-    private float delta = Gdx.graphics.getDeltaTime();
+    private final CollisionHandler collisionHandler;
+    private final ArrayList<ColliderBody> colliders;
 
-
-
-    private ArrayList<Student> students = new ArrayList<Student>();
+    private final ArrayList<Student> students = new ArrayList<Student>();
 
     /**
-     * Creates the initial flock and registers every goose collider.
+     *Initialises StudentManager class.
+     * @param texture represents the appearance of each student.
+     * @param collisionHandler manages all collidable
+     *                         objects on the board.
      */
     public StudentManager(TextureRegion texture,
                           CollisionHandler collisionHandler) {
@@ -43,10 +48,14 @@ public class StudentManager {
 
     }
 
-    public void generateStudents(){
+    /**
+     *Generates a new student every frame until there are 30
+     * total.
+     */
+    public void generateStudents(float delta){
         spawnTimer -= delta;
 
-        if (spawnTimer <= 0f && studentCount > 0) {
+        if (spawnTimer <= 0f && studentCount >= 0) {
             Student student = new Student(spawnX,spawnY,studentTexture,
                 collisionHandler);
             students.add(student);
@@ -56,8 +65,9 @@ public class StudentManager {
     }
 
     public void update(float delta) {
-
-        generateStudents();
+        /**
+         *Updates position of student on the map.
+         */
 
         for (Student student : students) {
             student.move(delta);
@@ -66,9 +76,8 @@ public class StudentManager {
         remove();
     }
     /**
-     * Removes the student from the game once it reaches designated
+     * Removes the student from the game once they reach designated
      * coordinates.
-     *
      */
     public void remove(){
         int s = students.size() - 1;
@@ -82,14 +91,13 @@ public class StudentManager {
         }
     }
 
+    /**
+     *Creates 2d-graphic of each student.
+     */
     public void render(SpriteBatch batch) {
         for (Student student : students) {
             student.render(batch);
         }
-    }
-
-    public ArrayList<Student> getStudents() {
-        return students;
     }
 
 }

@@ -60,9 +60,12 @@ public class ColliderBody {
     }
     /** Applies a displacement in world units. */
     public void push(float dx,float dy){
-        if (pushable == true) {
-            x+=dx;
-            y+=dy;
-        }
+        x+=dx;
+        y+=dy;
+    }
+
+    /** Returns whether an object can be pushed. */
+    public boolean getPushable(){
+        return pushable;
     }
 }

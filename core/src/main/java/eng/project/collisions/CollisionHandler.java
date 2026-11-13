@@ -66,7 +66,7 @@ public class CollisionHandler {
 
         if (boxCollider.getOwner() instanceof Fan wind) {
             if (circleCollider.getOwner() instanceof Goose
-                && distanceSquared < circle.radius() * circle.radius()) {
+                    && distanceSquared < circle.radius() * circle.radius()) {
                 boxCollider.touching(circleCollider);
                 circleCollider.touching(boxCollider);
                 wind.pushGoose(circleCollider);
@@ -118,7 +118,7 @@ public class CollisionHandler {
                     normalY = 1f;
                 }
                 circleCollider.push(normalX * (nearestFaceDistance + circle.radius()),
-                    normalY * (nearestFaceDistance + circle.radius()));
+                        normalY * (nearestFaceDistance + circle.radius()));
             }
         }
     }
@@ -182,8 +182,15 @@ public class CollisionHandler {
                 final float smooth = 0.3f;
 
                 // Push apart
-                colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
-                colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                if (colliderA.getPushable() && colliderB.getPushable()) {
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                } else if (colliderA.getPushable() && !colliderB.getPushable()){
+                    colliderA.push(-normalX * overlap * 0.5f * smooth, -normalY * overlap * 0.5f * smooth);
+                } else  if (colliderB.getPushable() && !colliderA.getPushable()){
+                    colliderB.push(normalX * overlap * 0.5f * smooth, normalY * overlap * 0.5f * smooth);
+                }
+
             }
         }
     }
