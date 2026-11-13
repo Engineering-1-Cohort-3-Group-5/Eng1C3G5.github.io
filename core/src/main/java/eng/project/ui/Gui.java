@@ -63,15 +63,14 @@ public class Gui {
     private float trailHealth = -1f;
     private float flashTimer = 0f;
 
-    public Gui(Pause pauseRunner, Play playRunner){
+    public Gui(){
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
         pixel = new Texture(pixmap);
         pixmap.dispose();
-        pauseButton(pauseRunner, playRunner);
     }
-    public void render(SpriteBatch batch, Inventory inventory, Player player){
+    public void render(SpriteBatch batch, Inventory inventory, Player player, Pause pauseRunner, Play playRunner){
         float delta = Gdx.graphics.getDeltaTime();
         updateEffects(delta, inventory, player);
 
@@ -83,7 +82,7 @@ public class Gui {
         renderItemName(batch, inventory);
         // Draw ui elements here
         //buttonBatch.setProjectionMatrix(camera.getMatrix());
-        batch.draw(buttonTexture, ((viewport.getWorldWidth() - layout.width) / 2f) - border, 700 - border,  50 + 2 * border, 50 + 2 * border);
+        renderPauseButton(batch, pauseRunner, playRunner);
         batch.end();
     }
     private final Stage stage = new Stage();
@@ -123,6 +122,12 @@ public class Gui {
 
     }
 
+    public void renderPauseButton(SpriteBatch batch, Pause pauseRunner, Play playRunner){
+        float x = viewport.getWorldWidth() - layout.width - 25;
+        float y = viewport.getWorldHeight() - layout.width - 25;
+        batch.draw(buttonTexture, x - border, y - border,  50 + 2 * border, 50 + 2 * border);
+        pauseButton(pauseRunner, playRunner);
+    }
     /** Health and stamina bars stacked just above hotbar */
     private void renderStatusBars(SpriteBatch batch, Player player) {
         float width = Inventory.size * slotSize + (Inventory.size - 1) * slotGap;
@@ -293,12 +298,15 @@ public class Gui {
     }
 
     public void pauseButton(Runnable onPause, Runnable onPlay) {
+        float x = viewport.getWorldWidth() - layout.width - 25;
+        float y = viewport.getWorldHeight() - layout.width - 25;
         Gdx.input.setInputProcessor(stage);
 
         Texture buttonTexture = new Texture("pause.png");
         Sprite buttonSprite = new Sprite(buttonTexture);
         ImageButton pauseButton = new ImageButton(new SpriteDrawable(buttonSprite));
-        pauseButton.setPosition(550, 400);
+        pauseButton.sizeBy(50 + 2 * border);
+        pauseButton.setPosition(x - border, y - border);
         pauseButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {

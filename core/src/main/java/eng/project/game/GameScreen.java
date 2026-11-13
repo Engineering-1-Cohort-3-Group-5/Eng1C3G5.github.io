@@ -58,7 +58,7 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(Main application, AssetManager assets) {
         this.application = application;
         // TextureRegion is used so that sprite atlases can later be used.
-        gui = new Gui(pauser, playRunnable);
+        gui = new Gui();
 
         geeseManager = new GeeseManager(new TextureRegion(assets.get("entity/goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
@@ -111,12 +111,12 @@ public class GameScreen extends ScreenAdapter {
             return true;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (state == GameState.Pause) {
-
-
-            } else {
-
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            if (GameScreen.state == GameState.Pause){
+                playRunnable.run();
+            }
+            else{
+                pauser.run();
             }
         }
 
@@ -190,7 +190,7 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
 
         timerGui.render(batch, timeRemaining);
-        gui.render(batch, inventory, player);
+        gui.render(batch, inventory, player, pauser, playRunnable);
     }
 
 
