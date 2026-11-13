@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
-import eng.project.entity.Player;
 import eng.project.inventory.Inventory;
-import eng.project.inventory.KeycardItem;
 import eng.project.inventory.KeycardItem;
 
 
