@@ -96,7 +96,6 @@ public class Player {
     public boolean isDead() {
         return health <= 0f;
     }
-
     public void render(SpriteBatch batch){
         // Centred around x and y
         batch.draw(playerTexture,body.getX()-size/2f, body.getY()-size/2f, size, size);
@@ -106,7 +105,6 @@ public class Player {
     public float getX() {
         return body.getX();
     }
-
     public float getY() {
         return body.getY();
     }
