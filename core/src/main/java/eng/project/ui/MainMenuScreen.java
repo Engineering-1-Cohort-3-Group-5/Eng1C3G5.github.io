@@ -56,6 +56,17 @@ public class MainMenuScreen extends ScreenAdapter {
 
         batch.begin();
 
+        String title = "GOOSE GAME";
+        layout.setText(font, title);
+
+        font.getData().setScale(3f);
+
+        font.draw(batch, title,
+            (Gdx.graphics.getWidth() - layout.width * 3f) / 2f,
+            playButton.y + playButton.height + 120);
+
+        font.getData().setScale(1f);
+
         layout.setText(font, "PLAY");
         font.draw(batch, "PLAY",
             playButton.x + (playButton.width - layout.width) / 2,
