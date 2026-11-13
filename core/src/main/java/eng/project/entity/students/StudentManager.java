@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.math.MathUtils;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
 import eng.project.world.Feature;
@@ -25,7 +26,7 @@ public class StudentManager {
     private final float spawnY =
         building.getY() + building.getHalfHeight();
 
-    private float spawnTimer = 1f;
+    private float spawnTimer = MathUtils.random(0.3f, 1.2f);
     private int studentCount = 30;
 
     private final CollisionHandler collisionHandler;
@@ -59,7 +60,7 @@ public class StudentManager {
             Student student = new Student(spawnX,spawnY,studentTexture,
                 collisionHandler);
             students.add(student);
-            spawnTimer = 1f;
+            spawnTimer = MathUtils.random(0.3f, 1.2f);
             studentCount -= 1;
         }
     }
