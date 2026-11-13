@@ -1,8 +1,13 @@
 package eng.project.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import eng.project.Main;
 
@@ -11,17 +16,77 @@ import eng.project.Main;
  */
 public class MainMenuScreen extends ScreenAdapter {
     private final Main application;
+    private SpriteBatch batch;
+    private ShapeRenderer shape;
+    private BitmapFont font;
+
+    private Rectangle playButton;
+    private Rectangle exitButton;
 
     public MainMenuScreen(Main application) {
         this.application = application;
+        shape = new ShapeRenderer();
+        font = new BitmapFont();
+        batch = new SpriteBatch();
+
+        float centerX = Gdx.graphics.getWidth() / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f;
+
+        playButton = new Rectangle(centerX - 100, centerY + 10, 200, 60);
+        exitButton = new Rectangle(centerX - 100, centerY - 80, 200, 60);
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            application.startGame();
+        // Draw buttons
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+
+        shape.setColor(Color.GREEN);
+        shape.rect(playButton.x, playButton.y, playButton.width, playButton.height);
+
+        shape.setColor(Color.RED);
+        shape.rect(exitButton.x, exitButton.y, exitButton.width, exitButton.height);
+
+        shape.end();
+
+        // Draw button text
+        GlyphLayout layout = new GlyphLayout();
+
+        batch.begin();
+
+        layout.setText(font, "PLAY");
+        font.draw(batch, "PLAY",
+            playButton.x + (playButton.width - layout.width) / 2,
+            playButton.y + (playButton.height + layout.height) / 2);
+
+        layout.setText(font, "EXIT");
+        font.draw(batch, "EXIT",
+            exitButton.x + (exitButton.width - layout.width) / 2,
+            exitButton.y + (exitButton.height + layout.height) / 2);
+
+        batch.end();
+
+        // Handle clicks
+        if (Gdx.input.justTouched()) {
+            float x = Gdx.input.getX();
+            float y = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+            if (playButton.contains(x, y)) {
+                application.startGame();
+            }
+
+            if (exitButton.contains(x, y)) {
+                Gdx.app.exit();
+            }
         }
+    }
+
+    @Override
+    public void dispose() {
+        shape.dispose();
+        font.dispose();
+        batch.dispose();
     }
 }
