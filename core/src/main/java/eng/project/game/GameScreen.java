@@ -24,6 +24,8 @@ import eng.project.ui.Gui;
 import eng.project.world.Map;
 import com.badlogic.gdx.InputAdapter;
 import eng.project.ui.TimerGui;
+import eng.project.ui.Pause;
+import eng.project.ui.Play;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -42,17 +44,25 @@ public class GameScreen extends ScreenAdapter {
     private final Fan fan;
     private final Whistle whistle;
     private final MushroomManager mushroomManager;
-    private final Gui gui = new Gui();
+    private final Gui gui;
     private final TimerGui timerGui = new TimerGui();
     private final Inventory inventory = new Inventory();
     private final CollisionHandler collisionHandler = new CollisionHandler();
-    private GameState state = GameState.Play;
+    public static GameState state = GameState.Play;
+    private Pause pauser = new Pause();
+    private Play playRunnable = new Play();
     private float timeRemaining = 300f;
     private boolean studentEvent = false;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
         this.application = application;
+        // TextureRegion is used so that sprite atlases can later be used.
+        player = new Player(new TextureRegion(assets.get("player.png", Texture.class)), collisionHandler);
+        geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
+        map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
+        foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
+        gui = new Gui(pauser, playRunnable);
 
         geeseManager = new GeeseManager(new TextureRegion(assets.get("entity/goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
@@ -107,9 +117,10 @@ public class GameScreen extends ScreenAdapter {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (state == GameState.Pause) {
-                resumeGame();
+
+
             } else {
-                pauseGame();
+
             }
         }
 
@@ -188,14 +199,18 @@ public class GameScreen extends ScreenAdapter {
 
 
     /** Stops simulation updates while keeping the world visible. */
-    public void pauseGame() {
+    public static void pauseGame() {
         state = GameState.Pause;
     }
 
-    /** Resumes simulation updates after {@link #pauseGame()}. */
-    public void resumeGame() {
+    //gui.pauseButton(pauser);//{state = GameState.Pause;}
+
+    /** Resumes simulation updates after {link #pauseGame()}. */
+    public static void resumeGame() {
         state = GameState.Play;
     }
+
+    //gui.playButton(playRunnable);//{state = GameState.Play;}
 
     /** Returns whether the game simulation is currently paused. */
     public boolean isPaused() {
