@@ -22,6 +22,8 @@ public class Main extends com.badlogic.gdx.Game {
         assets.load("entity/food.png", Texture.class);
         assets.load("entity/student.png", Texture.class);
         assets.load("entity/keycard.png", Texture.class);
+        assets.load("entity/fan.png", Texture.class);
+        assets.load("entity/whistle.png", Texture.class);
 
         assets.load("world/map.png", Texture.class);
         assets.load("world/bushes.png", Texture.class);
