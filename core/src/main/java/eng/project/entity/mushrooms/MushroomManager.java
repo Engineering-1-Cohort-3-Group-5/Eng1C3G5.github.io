@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import eng.project.world.Map;
+import eng.project.entity.Player;
 
 import java.util.ArrayList;
 
@@ -40,7 +41,7 @@ public class MushroomManager {
 
     // checks if the player has picked up a mushroom
 
-    public void update(float delta, float playerX, float playerY) {
+    public void update(float delta, Player player) {
 
         // count down the dizziness timer
         if (dizzinessTimer > 0) {
@@ -52,8 +53,8 @@ public class MushroomManager {
 
             Mushroom mushroom = mushrooms.get(i);
 
-            float distanceX = Math.abs(playerX - mushroom.getX());
-            float distanceY = Math.abs(playerY - mushroom.getY());
+            float distanceX = Math.abs(player.getX() - mushroom.getX());
+            float distanceY = Math.abs(player.getY() - mushroom.getY());
 
             if (distanceX < 0.8f && distanceY < 0.8f) {
 
@@ -62,12 +63,18 @@ public class MushroomManager {
                 // chance of mushroom being bad/good is chosen
                 int chance = MathUtils.random(1, 100);
 
+
                 if (chance <= 75) {
-                    System.out.println("Good mushroom collected: more HP!");
+
+                    // only heal if the player isn't at full health
+                    if (player.getHealth() < player.getMaxHealth()) {
+                        player.heal(20f); // heal 20hp
+                    }
+
                 } else {
-                    dizzinessTimer = 10f;
-                    System.out.println("Bad mushroom collected: nausea for 10 seconds!");
+                    dizzinessTimer = 10f; // dizzy for 10s
                 }
+
             }
         }
     }

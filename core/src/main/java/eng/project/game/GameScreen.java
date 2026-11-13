@@ -140,7 +140,7 @@ public class GameScreen extends ScreenAdapter {
                 studentManager.update(delta);
 
                 collisionHandler.resolveCollisions();
-                mushroomManager.update(delta, player.getX(), player.getY());
+                mushroomManager.update(delta, player);
                 camera.update(
                     player.getX(),
                     player.getY(),
