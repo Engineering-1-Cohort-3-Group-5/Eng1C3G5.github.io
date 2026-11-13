@@ -1,4 +1,4 @@
-package eng.project.world;
+package eng.project.entity;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,16 +25,18 @@ public class Bus {
             width, height
         );
     }
-    public void update(Main application){
+    public boolean update(Main application){
         for (Object other: body.getTouching()){
             if (other instanceof Player){
                 if(((Player) other).hasKeycard()){
                     application.showVictoryScreen();
+                    return true;
                 }
                 else{
                     // Need keycard
                 }
             }
         }
+        return false;
     }
 }
