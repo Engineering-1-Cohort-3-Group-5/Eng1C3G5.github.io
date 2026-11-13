@@ -36,7 +36,7 @@ import com.badlogic.gdx.Gdx;
 public class Gui {
     private final Texture buttonTexture = new Texture("pause.png");
     private final SpriteBatch buttonBatch = new SpriteBatch();
-    public CameraController camera = new CameraController();
+    //public CameraController camera = new CameraController();
     private static final float slotSize = 64f;
     private static final float slotGap = 8f;
     private static final float border = 3f;
@@ -81,12 +81,10 @@ public class Gui {
         renderStatusBars(batch, player);
         renderHotbar(batch, inventory);
         renderItemName(batch, inventory);
-        batch.end();
         // Draw ui elements here
         //buttonBatch.setProjectionMatrix(camera.getMatrix());
-        buttonBatch.begin();
-        buttonBatch.draw(buttonTexture, 550, 400, 50, 50);
-        buttonBatch.end();
+        batch.draw(buttonTexture, ((viewport.getWorldWidth() - layout.width) / 2f) - border, 700 - border,  50 + 2 * border, 50 + 2 * border);
+        batch.end();
     }
     private final Stage stage = new Stage();
 
@@ -313,22 +311,6 @@ public class Gui {
             }
         });
         stage.addActor(pauseButton);
-    }
-
-    public void playButton(Runnable onPlay) {
-        Gdx.input.setInputProcessor(stage);
-
-        Texture buttonTexture = new Texture("play.png");
-        Sprite buttonSprite = new Sprite(buttonTexture);
-        ImageButton playButton = new ImageButton(new SpriteDrawable(buttonSprite));
-        playButton.setPosition(20, 400);
-        playButton.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                onPlay.run();
-            }
-        });
-        stage.addActor(playButton);
     }
 
     public void update(float delta) {

@@ -58,10 +58,6 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(Main application, AssetManager assets) {
         this.application = application;
         // TextureRegion is used so that sprite atlases can later be used.
-        player = new Player(new TextureRegion(assets.get("player.png", Texture.class)), collisionHandler);
-        geeseManager = new GeeseManager(new TextureRegion(assets.get("goose.png", Texture.class)), collisionHandler);
-        map = new Map(new TextureRegion(assets.get("map.png", Texture.class)), new TextureRegion(assets.get("building.png", Texture.class)), collisionHandler);
-        foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
         gui = new Gui(pauser, playRunnable);
 
         geeseManager = new GeeseManager(new TextureRegion(assets.get("entity/goose.png", Texture.class)));
