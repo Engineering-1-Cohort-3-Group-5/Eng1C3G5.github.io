@@ -29,5 +29,5 @@ Repository: https://github.com/Engineering-1-Cohort-3-Group-5/Eng1C3G5.github.io
 #### Week 4 Project Plan
 ![Week 4 Project Plan](ganttDiagrams/Week4Gantt.svg)
 
-#### Week 6 Project Plan
-![Week 6 Project Plan](ganttDiagrams/Week6Gantt.svg)
+#### Week 7 Project Plan
+![Week 7 Project Plan](ganttDiagrams/Week7Gantt.svg)
