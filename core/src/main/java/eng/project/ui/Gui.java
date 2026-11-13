@@ -45,6 +45,10 @@ public class Gui {
     // Status bar layout in pixels
     private static final float barHeight = 18f;
     private static final float barGap = 6f;
+    private static final float counterMargin = 20f;
+    private static final float counterTop = 120f;
+    private static final float pauseButtonSize = 50f;
+    private static final float pauseButtonMargin = 25f;
 
     private final OrthographicCamera camera = new OrthographicCamera();
     private final ScreenViewport viewport = new ScreenViewport(camera);
@@ -80,6 +84,7 @@ public class Gui {
         renderStatusBars(batch, player);
         renderHotbar(batch, inventory);
         renderItemName(batch, inventory);
+        renderItemCounter(batch, inventory);
         // Draw ui elements here
         //buttonBatch.setProjectionMatrix(camera.getMatrix());
         renderPauseButton(batch, pauseRunner, playRunner);
@@ -123,9 +128,9 @@ public class Gui {
     }
 
     public void renderPauseButton(SpriteBatch batch, Pause pauseRunner, Play playRunner){
-        float x = viewport.getWorldWidth() - layout.width - 25;
-        float y = viewport.getWorldHeight() - layout.width - 25;
-        batch.draw(buttonTexture, x - border, y - border,  50 + 2 * border, 50 + 2 * border);
+        float x = viewport.getWorldWidth() - pauseButtonSize - pauseButtonMargin;
+        float y = viewport.getWorldHeight() - pauseButtonSize - pauseButtonMargin;
+        batch.draw(buttonTexture, x - border, y - border, pauseButtonSize + 2 * border, pauseButtonSize + 2 * border);
         pauseButton(pauseRunner, playRunner);
     }
     /** Health and stamina bars stacked just above hotbar */
@@ -238,6 +243,25 @@ public class Gui {
         font.setColor(Color.WHITE);
     }
 
+    public void renderItemCounter(SpriteBatch batch, Inventory inventory) {
+        String text = "Items used: " + inventory.getItemsUsed();
+        layout.setText(font, text);
+
+        float padding = 8f;
+        float boxWidth = layout.width + 2 * padding;
+        float boxHeight = layout.height + 2 * padding;
+        float x = counterMargin;
+        float y = viewport.getWorldHeight() - counterTop - boxHeight;
+
+        batch.setColor(Color.DARK_GRAY);
+        batch.draw(pixel, x - border, y - border, boxWidth + 2 * border, boxHeight + 2 * border);
+        batch.setColor(0.12f, 0.12f, 0.12f, 1f);
+        batch.draw(pixel, x, y, boxWidth, boxHeight);
+        batch.setColor(Color.WHITE);
+
+        font.draw(batch, text, x + padding, y + padding + layout.height);
+    }
+
     /** Keeps the HUD camera matched to the window size */
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -298,8 +322,8 @@ public class Gui {
     }
 
     public void pauseButton(Runnable onPause, Runnable onPlay) {
-        float x = viewport.getWorldWidth() - layout.width - 25;
-        float y = viewport.getWorldHeight() - layout.width - 25;
+        float x = viewport.getWorldWidth() - pauseButtonSize - pauseButtonMargin;
+        float y = viewport.getWorldHeight() - pauseButtonSize - pauseButtonMargin;
         Gdx.input.setInputProcessor(stage);
 
         Texture buttonTexture = new Texture("pause.png");

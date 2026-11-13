@@ -6,6 +6,9 @@ import eng.project.collisions.Circle;
 import eng.project.collisions.ColliderBody;
 import eng.project.collisions.CollisionHandler;
 import eng.project.entity.Player;
+import eng.project.inventory.Inventory;
+import eng.project.inventory.KeycardItem;
+import eng.project.inventory.KeycardItem;
 
 
 public class Keycard {
@@ -21,11 +24,12 @@ public class Keycard {
         collisionHandler.add(pickupTrigger);
     }
 
-    public void update(){
+    public void update(Inventory inventory){
         if (!collected) {
             for (Object other : pickupTrigger.getTouching()) {
                 if (other instanceof Player) {
                     ((Player) other).pickupKeycard();
+                    inventory.add(new KeycardItem("Keycard", texture));
                     collected = true;
                 }
             }

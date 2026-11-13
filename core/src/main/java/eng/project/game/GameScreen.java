@@ -26,6 +26,7 @@ import com.badlogic.gdx.InputAdapter;
 import eng.project.ui.TimerGui;
 import eng.project.ui.Pause;
 import eng.project.ui.Play;
+import eng.project.inventory.Seeds;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -41,6 +42,7 @@ public class GameScreen extends ScreenAdapter {
     private final GeeseManager geeseManager;
     private final StudentManager studentManager;
     private final FoodManager foodManager;
+    private final Seeds seeds;
     private final Fan fan;
     private final Whistle whistle;
     private final MushroomManager mushroomManager;
@@ -74,9 +76,13 @@ public class GameScreen extends ScreenAdapter {
             map
         );
 
-        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("entity/food.png", Texture.class
+        seeds = new Seeds(foodManager, player, "Seeds", new TextureRegion(assets.get("entity/food.png", Texture.class)));
+        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("entity/fan.png", Texture.class
         )), new TextureRegion(assets.get("wind.png", Texture.class)));
-        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("entity/food.png", Texture.class)));
+        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("entity/whistle.png", Texture.class)));
+        for (int i = 0; i < 10; i++) {
+            inventory.add(seeds);
+        }
         inventory.add(fan);
         inventory.add(whistle);
 
@@ -136,11 +142,11 @@ public class GameScreen extends ScreenAdapter {
                 if (timeRemaining <= 180f) {
                     studentManager.generateStudents(delta);
                 }
-                foodManager.update(delta, player.getX(), player.getY());
+                foodManager.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
 
                 player.update(delta);
-                keycard.update();
+                keycard.update(inventory);
                 map.update(application);
 
                 fan.update(delta);

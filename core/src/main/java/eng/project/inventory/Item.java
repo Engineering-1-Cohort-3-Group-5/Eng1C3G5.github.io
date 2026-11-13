@@ -23,6 +23,11 @@ public abstract class Item {
         return icon;
     }
 
+    /** Returns false for items that only sit in the hotbar like the Keycard*/
+    public boolean isUsable() {
+        return true;
+    }
+
     public int getMaxStackSize() {
         return 10;
     }

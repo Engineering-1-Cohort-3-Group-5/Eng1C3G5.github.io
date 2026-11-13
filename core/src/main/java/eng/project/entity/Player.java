@@ -31,6 +31,9 @@ public class Player {
     private float stamina = maxStamina;
     private final float sprintRecoverThreshold = 25f;
     private boolean exhausted = false;
+    private final float gooseDamage = 10f;
+    private final float invulnerableTime = 1f;
+    private float invulnerableTimer = 0f;
 
     /** Creates the player at the world origin and registers its collider. */
     public Player(TextureRegion texture, CollisionHandler collisionHandler){
@@ -58,6 +61,7 @@ public class Player {
         boolean moving = length > 0f;
         boolean sprinting = moving && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !exhausted;
         updateStamina(delta, sprinting);
+        updateGooseDamage(delta);
         // Move in normalised direction and move faster when sprinting
         if (moving) {
             float currentSpeed = sprinting ? speed * sprintMultiplier : speed;
@@ -79,6 +83,20 @@ public class Player {
         }
         if (exhausted && stamina >= sprintRecoverThreshold) {
             exhausted = false;
+        }
+    }
+
+    public void updateGooseDamage(float delta) {
+        if (invulnerableTimer > 0f) {
+            invulnerableTimer -= delta;
+            return;
+        }
+        for (Object other : body.getTouching()) {
+            if (other instanceof Goose) {
+                damage(gooseDamage);
+                invulnerableTimer = invulnerableTime;
+                return;
+            }
         }
     }
 
