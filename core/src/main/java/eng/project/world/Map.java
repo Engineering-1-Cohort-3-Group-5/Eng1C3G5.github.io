@@ -114,33 +114,20 @@ public class Map {
     }
 
 
+
     public boolean canSpawnMushroom(float x, float y) {
 
         // keep mushrooms inside the map
-        if (x < -19 || x > 19 || y < -19 || y > 19) {
+        if (x < -width / 2 + 1 || x > width / 2 - 1 ||
+            y < -height / 2 + 1 || y > height / 2 - 1) {
             return false;
         }
 
-        // check if mushroom is inside a building
-        float[][] buildings = {
-            {-10, 0, 2, 3},
-            {-2, 4, 4, 3},
-            {-15, 15, 4, 4},
-            {14, -15, 4, 1.5f},
-            {11, 11, 4, 1.5f},
-            {16, 1, 3, 3},
-            {-15, -12, 3, 5}
-        };
+        // check all buildings and trees
+        for (Feature feature : mapFeatures) {
 
-        for (float[] building : buildings) {
-            float bx = building[0];
-            float by = building[1];
-            float width = building[2];
-            float height = building[3];
-
-            // extra space so mushrooms don't touch buildings
-            if (Math.abs(x - bx) < width + 0.5f &&
-                Math.abs(y - by) < height + 0.5f) {
+            if (Math.abs(x - feature.getX()) < feature.getHalfWidth() + 0.5f &&
+                Math.abs(y - feature.getY()) < feature.getHalfHeight() + 0.5f) {
                 return false;
             }
         }

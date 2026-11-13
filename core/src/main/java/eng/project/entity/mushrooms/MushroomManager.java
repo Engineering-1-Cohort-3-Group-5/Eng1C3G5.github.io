@@ -18,13 +18,13 @@ public class MushroomManager {
 
         for (int i = 0; i < 30; i++) {
 
-            float x = MathUtils.random(-19f, 19f);
-            float y = MathUtils.random(-19f, 19f);
+            float x = MathUtils.random(-map.getWidth() / 2 + 1, map.getWidth() / 2 - 1);
+            float y = MathUtils.random(-map.getHeight() / 2 + 1, map.getHeight() / 2 - 1);
 
             // retry if the mushroom is inside a building
             while (!map.canSpawnMushroom(x, y)) {
-                x = MathUtils.random(-19f, 19f);
-                y = MathUtils.random(-19f, 19f);
+                x = MathUtils.random(-map.getWidth() / 2 + 1, map.getWidth() / 2 - 1);
+                y = MathUtils.random(-map.getHeight() / 2 + 1, map.getHeight() / 2 - 1);
             }
 
             mushrooms.add(new Mushroom(x, y, texture));
