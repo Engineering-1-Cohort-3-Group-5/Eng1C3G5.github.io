@@ -273,7 +273,7 @@ public class Gui {
         font.dispose();
     }
 
-    /** */
+    /** Displays labels of game instructions */
     public void TutorialScreen() {
         Gdx.input.setInputProcessor(stage);
         tutorialBatch.begin();
