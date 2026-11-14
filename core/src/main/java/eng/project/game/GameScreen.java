@@ -213,6 +213,7 @@ public class GameScreen extends ScreenAdapter {
 
         timerGui.render(batch, timeRemaining);
         gui.render(batch, inventory, player, pauser, playRunnable);
+        gui.tutorialScreen();
     }
 
 
