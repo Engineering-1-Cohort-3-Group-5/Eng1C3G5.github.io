@@ -3,7 +3,6 @@ package eng.project.inventory;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
-import org.w3c.dom.Text;
 
 public class Seeds extends Item {
     private final FoodManager foodManager;
@@ -19,10 +18,5 @@ public class Seeds extends Item {
     public boolean Use() {
         foodManager.spawnFood(player.getX(), player.getY());
         return true;
-    }
-
-    @Override
-    public void Recharge() {
-        // seeds are used not recharged
     }
 }

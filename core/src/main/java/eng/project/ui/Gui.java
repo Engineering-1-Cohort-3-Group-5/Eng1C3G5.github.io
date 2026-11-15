@@ -1,42 +1,33 @@
 package eng.project.ui;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import eng.project.game.CameraController;
 import eng.project.game.GameScreen;
 import eng.project.game.GameState;
 
 import static com.badlogic.gdx.Input.Keys.ESCAPE;
-import com.badlogic.gdx.graphics.Color;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import eng.project.inventory.Inventory;
 import eng.project.inventory.ItemStack;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import eng.project.entity.Player;
-import com.badlogic.gdx.Gdx;
 
 /** Entry point for screen-space UI; add HUD elements here as the game expands. */
 public class Gui {
     private final Texture buttonTexture = new Texture("pause.png");
-    private final SpriteBatch buttonBatch = new SpriteBatch();
-    //public CameraController camera = new CameraController();
+    private final SpriteBatch tutorialBatch = new SpriteBatch();
     private static final float slotSize = 64f;
     private static final float slotGap = 8f;
     private static final float border = 3f;
@@ -67,7 +58,13 @@ public class Gui {
     private float trailHealth = -1f;
     private float flashTimer = 0f;
 
-    public Gui(){
+    private boolean WASD = true;
+    private boolean scroll = false;
+    private boolean clickE = false;
+    private boolean pause = false;
+    private boolean instruct = false;
+
+    public Gui(Pause pauseRunner, Play playRunner){
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
@@ -86,7 +83,6 @@ public class Gui {
         renderItemName(batch, inventory);
         renderItemCounter(batch, inventory);
         // Draw ui elements here
-        //buttonBatch.setProjectionMatrix(camera.getMatrix());
         renderPauseButton(batch, pauseRunner, playRunner);
         batch.end();
     }
@@ -273,52 +269,51 @@ public class Gui {
         font.dispose();
     }
 
-    public void TutorialScreen() {
+    /** Displays labels of game instructions */
+    public void tutorialScreen() {
         Gdx.input.setInputProcessor(stage);
+        tutorialBatch.begin();
 
-        Label labelWASD = new Label("Use WASD to move", new Label.LabelStyle(null, Color.WHITE));
-        Label labelScroll = new Label("Use scroll wheel on mouse or keyboard numbers to select an item", new Label.LabelStyle(null, Color.WHITE));
-        Label labelLClick = new Label("Left click to use item", new Label.LabelStyle(null, Color.WHITE));
-        Label labelPause = new Label("Press the pause button or ESC to pause", new Label.LabelStyle(null, Color.WHITE));
-        Label labelPlay = new Label("Press again to play", new Label.LabelStyle(null, Color.WHITE));
-        Label labelInstruct = new Label("Find the bus pass and get to the bus before time runs out!", new Label.LabelStyle(null, Color.WHITE));
+        CharSequence labelWASD = "Use WASD to move";
+        CharSequence labelScroll = "Use keyboard numbers to select an item";
+        CharSequence labelE = "Press E to use item";
+        CharSequence labelPause = "Press the pause/play button or ESC to pause/play";
+        CharSequence labelInstruct = "Find the bus pass and get to the bus before time runs out!";
 
-        Container labelContainer = new Container(labelWASD);
-        labelContainer.bottom();
-        stage.addActor(labelWASD);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.A) ||
-            Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            labelWASD.setVisible(false);
-            Container containerScroll = new Container(labelScroll);
-            containerScroll.bottom();
-            stage.addActor(labelScroll);
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                labelScroll.setVisible(false);
-                Container containerLClick = new Container(labelLClick);
-                containerLClick.bottom();
-                stage.addActor(labelLClick);
-                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                    labelLClick.setVisible(false);
-                    Container containerPause = new Container(labelPause);
-                    containerPause.bottom();
-                    stage.addActor(labelPause);
-                    if (Gdx.input.isKeyJustPressed(ESCAPE)) {
-                        labelPause.setVisible(false);
-                        Container containerPlay = new Container(labelPlay);
-                        containerPlay.bottom();
-                        stage.addActor(labelPlay);
-                        if (Gdx.input.isKeyJustPressed(ESCAPE)) {
-                            labelPlay.setVisible(false);
-                            Container containerInstruct = new Container(labelInstruct);
-                            containerInstruct.bottom();
-                            stage.addActor(labelInstruct);
-
-                        }
-                    }
-                }
-            }
+        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.A) ||
+            Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            scroll = true;
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1) || Gdx.input.isKeyJustPressed(Input.Keys.NUM_2) ||
+            Gdx.input.isKeyJustPressed(Input.Keys.NUM_3) || Gdx.input.isKeyJustPressed(Input.Keys.NUM_4) ||
+            Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+            clickE = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            pause = true;
+        }
+        if (Gdx.input.isKeyJustPressed(ESCAPE)) {
+            instruct = true;
+        }
+
+        if (WASD && !scroll) {
+            font.draw(tutorialBatch, labelWASD, 10, 40);
+            font.getData().setScale(2.0f);
+        }
+        else if (scroll && !clickE) {
+            font.draw(tutorialBatch, labelScroll, 10, 40);
+        }
+        else if (clickE && !pause) {
+            font.draw(tutorialBatch, labelE, 10, 40);
+        }
+        else if (pause && !instruct) {
+            font.draw(tutorialBatch, labelPause, 10, 40);
+        }
+        else if (instruct) {
+            font.draw(tutorialBatch, labelInstruct, 10, 40);
+        }
+
+        tutorialBatch.end();
     }
 
     public void pauseButton(Runnable onPause, Runnable onPlay) {

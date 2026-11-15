@@ -13,11 +13,6 @@ public class KeycardItem extends Item {
     }
 
     @Override
-    public void Recharge() {
-        // doesnt need to recharge
-    }
-
-    @Override
     public boolean isUsable() {
         return false;
     }
