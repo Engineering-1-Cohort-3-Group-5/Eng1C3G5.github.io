@@ -6,9 +6,9 @@ Architecture: https://docs.google.com/document/d/1TzoM5JcSVfVxfLRR8gTkypFC0vH2wr
 
 Planning:
 
-Implementation: https://docs.google.com/document/d/1EDezyeblVpin3uCbS8wvbFe_BrENXD-KVbQLoCv0iJY/edit?usp=sharing
+Risks: https://1drv.ms/w/c/7fa17625c5292594/IQBGFWIc7tadQZSVLs3F3gJzAXYqDUIO2bl8fzRSZjjzQkk
 
-Risks: https://docs.google.com/document/d/1OQcT9GZBgtdByeZ4WNBoPyWrezSevrTCJko1J7j-QE0/edit?usp=sharing
+Implementation: https://docs.google.com/document/d/1EDezyeblVpin3uCbS8wvbFe_BrENXD-KVbQLoCv0iJY/edit?usp=sharing
 
 Executable:
 
