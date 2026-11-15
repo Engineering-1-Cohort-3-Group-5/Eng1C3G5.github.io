@@ -1,14 +1,17 @@
 # Engineering 1 Cohort 3 Group 5
 
-Requirements: https://docs.google.com/document/d/1yeaoK_1mfQn3LMuJTKoRhyuUO1CuMTIVL0JHH_UibGg/edit?usp=sharing
+Requirements: 
+https://1drv.ms/w/c/7fa17625c5292594/IQCdI5-MBPoSQYalD5_pwZYeAcDEG7F-q2FFqg2bZ-ZvCZc
 
 Architecture: https://docs.google.com/document/d/1TzoM5JcSVfVxfLRR8gTkypFC0vH2wr5XmEeu74xXAIM/edit?usp=sharing
 
 Planning:
+https://1drv.ms/w/c/7fa17625c5292594/IQCgBTZxgBKoQ4Dck7KU4-34AbtHbHvkYn6y1CVlmaSXqL4
 
-Implementation: https://docs.google.com/document/d/1EDezyeblVpin3uCbS8wvbFe_BrENXD-KVbQLoCv0iJY/edit?usp=sharing
+Risks: https://1drv.ms/w/c/7fa17625c5292594/IQBGFWIc7tadQZSVLs3F3gJzAXYqDUIO2bl8fzRSZjjzQkk
 
-Risks: https://docs.google.com/document/d/1OQcT9GZBgtdByeZ4WNBoPyWrezSevrTCJko1J7j-QE0/edit?usp=sharing
+Implementation:
+https://1drv.ms/w/c/7fa17625c5292594/IQBUf3i1slJoR5Jk1UgFSk7ZAV8dooOp5IympQ7pVdRm9ok
 
 Executable:
 
