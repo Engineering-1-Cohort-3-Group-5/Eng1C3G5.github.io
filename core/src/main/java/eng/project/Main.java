@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import eng.project.game.GameScreen;
+import eng.project.ui.DefeatScreen;
 import eng.project.ui.MainMenuScreen;
 import eng.project.ui.VictoryScreen;
 
@@ -21,6 +22,8 @@ public class Main extends com.badlogic.gdx.Game {
         assets.load("entity/food.png", Texture.class);
         assets.load("entity/student.png", Texture.class);
         assets.load("entity/keycard.png", Texture.class);
+        assets.load("entity/fan.png", Texture.class);
+        assets.load("entity/whistle.png", Texture.class);
 
         assets.load("world/map.png", Texture.class);
         assets.load("world/bushes.png", Texture.class);
@@ -46,6 +49,9 @@ public class Main extends com.badlogic.gdx.Game {
     }
     public void showVictoryScreen() {
         changeScreen(new VictoryScreen(this));
+    }
+    public void showDefeatScreen() {
+        changeScreen(new DefeatScreen(this));
     }
 
     /** Replaces and disposes the current screen, which prevents abandoned game screens leaking resources. */

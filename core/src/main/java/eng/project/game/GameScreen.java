@@ -7,11 +7,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import eng.project.Main;
 import eng.project.collisions.CollisionHandler;
-import eng.project.world.Keycard;
+import eng.project.entity.Bus;
+import eng.project.entity.Keycard;
 import eng.project.entity.Player;
 import eng.project.entity.food.FoodManager;
 import eng.project.entity.geese.GeeseManager;
@@ -26,6 +26,7 @@ import com.badlogic.gdx.InputAdapter;
 import eng.project.ui.TimerGui;
 import eng.project.ui.Pause;
 import eng.project.ui.Play;
+import eng.project.inventory.Seeds;
 
 /**
  * The playable game screen. It owns the world systems and keeps their update order
@@ -41,6 +42,7 @@ public class GameScreen extends ScreenAdapter {
     private final GeeseManager geeseManager;
     private final StudentManager studentManager;
     private final FoodManager foodManager;
+    private final Seeds seeds;
     private final Fan fan;
     private final Whistle whistle;
     private final MushroomManager mushroomManager;
@@ -53,15 +55,17 @@ public class GameScreen extends ScreenAdapter {
     private Play playRunnable = new Play();
     private float timeRemaining = 300f;
     private boolean studentEvent = false;
+    private final Bus bus;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
         this.application = application;
         // TextureRegion is used so that sprite atlases can later be used.
-        gui = new Gui(pauser, playRunnable);
+        gui = new Gui();
 
         geeseManager = new GeeseManager(new TextureRegion(assets.get("entity/goose.png", Texture.class)));
         map = new Map(assets, collisionHandler);
+        bus = new Bus(-22,-36,assets.get("world/bus.png",Texture.class),collisionHandler);
 
         keycard = new Keycard(new TextureRegion(assets.get("entity/keycard.png", Texture.class)), collisionHandler);
         player = new Player(new TextureRegion(assets.get("entity/player.png", Texture.class)), collisionHandler);
@@ -74,9 +78,13 @@ public class GameScreen extends ScreenAdapter {
             map
         );
 
-        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("entity/food.png", Texture.class
+        seeds = new Seeds(foodManager, player, "Seeds", new TextureRegion(assets.get("entity/food.png", Texture.class)));
+        fan = new Fan(collisionHandler, player, camera, "Fan", new TextureRegion(assets.get("entity/fan.png", Texture.class
         )), new TextureRegion(assets.get("wind.png", Texture.class)));
-        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("entity/food.png", Texture.class)));
+        whistle = new Whistle(player, geeseManager, "Whistle", new TextureRegion(assets.get("entity/whistle.png", Texture.class)));
+        for (int i = 0; i < 10; i++) {
+            inventory.add(seeds);
+        }
         inventory.add(fan);
         inventory.add(whistle);
 
@@ -84,6 +92,8 @@ public class GameScreen extends ScreenAdapter {
             new StudentManager(new TextureRegion(assets.get(
                 "entity/student" +
                     ".png", Texture.class)), collisionHandler);
+
+        state = GameState.Play;
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
@@ -100,7 +110,9 @@ public class GameScreen extends ScreenAdapter {
         if (handleInput()) {
             return;
         }
-        update(delta);
+        if (update(delta)) {
+            return;
+        }
         renderWorld();
     }
 
@@ -112,11 +124,11 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (state == GameState.Pause) {
-
-
-            } else {
-
+            if (GameScreen.state == GameState.Pause){
+                playRunnable.run();
+            }
+            else{
+                pauser.run();
             }
         }
 
@@ -124,24 +136,32 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /** Advances the simulation only while the game is being played. */
-    private void update(float delta) {
+    private boolean update(float delta) {
         switch (state) {
             case Play -> {
                 handleInventoryInput();
                 // Count down while the game is running.
                 timeRemaining = Math.max(0f, timeRemaining - delta);
 
+                // Game over
+                if (timeRemaining <= 0 || player.isDead()){
+                    application.showDefeatScreen();
+                    return true;
+                }
+
                 //Starts student hidden event when three minutes
                 // remain.
                 if (timeRemaining <= 180f) {
                     studentManager.generateStudents(delta);
                 }
-                foodManager.update(delta, player.getX(), player.getY());
+                foodManager.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
 
                 player.update(delta);
-                keycard.update();
-                map.update(application);
+                keycard.update(inventory);
+                if (bus.update(application)){
+                    return true;
+                }
 
                 fan.update(delta);
                 studentManager.update(delta);
@@ -155,9 +175,10 @@ public class GameScreen extends ScreenAdapter {
                 );
             }
             case Pause -> {
-                // Pause-menu input will be handled here when it is implemented.
+
             }
         }
+        return false;
     }
 
     public void handleInventoryInput() {
@@ -178,6 +199,7 @@ public class GameScreen extends ScreenAdapter {
 
         // A paused game still shows the current world behind its future pause UI.
         map.render_back(batch);
+        bus.render(batch);
         keycard.render(batch);
         foodManager.render(batch);
         mushroomManager.render(batch);
@@ -190,7 +212,7 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
 
         timerGui.render(batch, timeRemaining);
-        gui.render(batch, inventory, player);
+        gui.render(batch, inventory, player, pauser, playRunnable);
     }
 
 

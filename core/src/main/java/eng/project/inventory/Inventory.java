@@ -4,6 +4,7 @@ public class Inventory {
     public static final int size = 5;
     private final ItemStack[] slots = new ItemStack[size];
     private int selectedIndex = 0;
+    private int itemsUsed = 0;
 
     /**
      * Adds one item first onto an existing stack of the same kind with space
@@ -33,6 +34,10 @@ public class Inventory {
         if (stack == null) {
             return;
         }
+        if (!stack.getItem().isUsable()) {
+            return;
+        }
+        itemsUsed++;
         if (stack.getItem().Use()) {
             stack.decrease();
             if (stack.isEmpty()) {
@@ -56,6 +61,10 @@ public class Inventory {
     // Getters for Inventory
     public ItemStack get(int index) {
         return slots[index];
+    }
+
+    public int getItemsUsed() {
+        return itemsUsed;
     }
 
     public ItemStack getSelectedStack() {

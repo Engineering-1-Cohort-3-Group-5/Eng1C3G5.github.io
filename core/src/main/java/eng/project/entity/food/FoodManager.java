@@ -1,6 +1,5 @@
 package eng.project.entity.food;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -14,19 +13,19 @@ public class FoodManager {
         this.foodTexture = foodTexture;
     }
 
-    /** Drops food at the player position on a click, then advances and removes items. */
-    public void update(float delta,float playerX, float playerY) {
-        if (Gdx.input.justTouched()){
-            // Place food on player if mouse clicked
-            food.add(new Food(foodTexture,playerX,playerY));
-        }
+    public void spawnFood(float x, float y) {
+        food.add(new Food(foodTexture, x, y));
+    }
 
+    /** Updates food lifetimes and removes finished items  */
+    public void update(float delta) {
         for (Food item : food) {
             item.update(delta);
         }
 
         food.removeIf(Food::isFinished);
     }
+
     /** Returns the nearest active food and its squared distance, or {@code null} if none exist. */
     public FoodTarget findClosestFood(float gooseX, float gooseY) {
         Food closest = null;

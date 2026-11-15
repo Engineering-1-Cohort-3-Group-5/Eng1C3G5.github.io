@@ -17,15 +17,13 @@ public class Map {
     private final Texture borderTexture;
     private static final float width = 120f;
     private static final float height = 100f;
-    private final Bus bus;
+
     private static final ArrayList<Feature> mapFeatures = new ArrayList<>();
 
     /** Builds the background and registers the hard-coded building colliders. */
     public Map(AssetManager assets, CollisionHandler collisionHandler){
         this.mapTexture = assets.get("world/map.png",Texture.class);
         this.borderTexture = assets.get("world/border.png",Texture.class);
-
-        bus = new Bus(-22,-36,assets.get("world/bus.png",Texture.class),collisionHandler);
 
         // Generate map structures here
 
@@ -88,16 +86,11 @@ public class Map {
         }
     }
 
-    public void update(Main application){
-        bus.update(application);
-    }
-
     public void render_back(SpriteBatch batch){
         batch.draw(mapTexture,-width/2f, -height/2f, width, height);
     }
 
     public void render_front(SpriteBatch batch){
-        bus.render(batch);
         for (Feature feature : mapFeatures){
             feature.render(batch);
         }
