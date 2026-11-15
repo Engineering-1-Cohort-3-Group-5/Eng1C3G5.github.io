@@ -274,7 +274,7 @@ public class Gui {
     }
 
     /** Displays labels of game instructions */
-    public void TutorialScreen() {
+    public void tutorialScreen() {
         Gdx.input.setInputProcessor(stage);
         tutorialBatch.begin();
 
@@ -301,23 +301,22 @@ public class Gui {
         }
 
         if (WASD && !scroll) {
-            font.draw(tutorialBatch, labelWASD, 10, 15);
+            font.draw(tutorialBatch, labelWASD, 10, 40);
+            font.getData().setScale(2.0f);
         }
         else if (scroll && !clickE) {
-            font.draw(tutorialBatch, labelScroll, 10, 15);
+            font.draw(tutorialBatch, labelScroll, 10, 40);
         }
         else if (clickE && !pause) {
-            font.draw(tutorialBatch, labelE, 10, 15);
+            font.draw(tutorialBatch, labelE, 10, 40);
         }
         else if (pause && !instruct) {
-            font.draw(tutorialBatch, labelPause, 10, 15);
+            font.draw(tutorialBatch, labelPause, 10, 40);
         }
-
         else if (instruct) {
-            font.draw(tutorialBatch, labelInstruct, 10, 15);
+            font.draw(tutorialBatch, labelInstruct, 10, 40);
         }
 
-        font.draw(tutorialBatch, "", 10, 10);
         tutorialBatch.end();
     }
 
