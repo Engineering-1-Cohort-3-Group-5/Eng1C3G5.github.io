@@ -18,12 +18,14 @@ Executable: https://drive.google.com/file/d/19nDViV6C7VD-k0ZjX1I2tCjfkpN74QZX/vi
 Repository: https://github.com/Engineering-1-Cohort-3-Group-5/Eng1C3G5.github.io/tree/main
 
 
-
 ## Additional Material
 
-### Risk Matrix
+### Question 5: Risk Matrix
 
 <img width="508" height="124" alt="image" src="https://github.com/user-attachments/assets/239f173b-36b6-45a5-8813-d8cbf6abe422" />
+
+### Question 3: Architecture Diagrams
+[Architecture Diagrams PDF](./ArchitectureOldDiagrams.pdf)
 
 ### Question 4: Project Plan
 #### Week 1 Project Plan
