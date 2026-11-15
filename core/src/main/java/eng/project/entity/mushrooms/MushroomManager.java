@@ -41,8 +41,7 @@ public class MushroomManager {
 
     // checks if the player has picked up a mushroom
 
-    public void update(float delta, Player player) {
-
+    public boolean update(float delta, Player player) {
         // count down the dizziness timer
         if (dizzinessTimer > 0) {
             dizzinessTimer -= delta;
@@ -69,14 +68,17 @@ public class MushroomManager {
                     // only heal if the player isn't at full health
                     if (player.getHealth() < player.getMaxHealth()) {
                         player.heal(20f); // heal 20hp
+                        return false;
                     }
 
                 } else {
                     dizzinessTimer = 10f; // dizzy for 10s
+                    return true;
                 }
 
             }
         }
+        return false;
     }
 
     // checks whether the player is dizzy

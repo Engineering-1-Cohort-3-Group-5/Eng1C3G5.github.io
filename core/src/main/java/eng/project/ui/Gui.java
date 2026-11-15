@@ -71,7 +71,7 @@ public class Gui {
         pixel = new Texture(pixmap);
         pixmap.dispose();
     }
-    public void render(SpriteBatch batch, Inventory inventory, Player player, Pause pauseRunner, Play playRunner){
+    public void render(SpriteBatch batch, Inventory inventory, Player player, Pause pauseRunner, Play playRunner,int eventsOccured){
         float delta = Gdx.graphics.getDeltaTime();
         updateEffects(delta, inventory, player);
 
@@ -82,6 +82,7 @@ public class Gui {
         renderHotbar(batch, inventory);
         renderItemName(batch, inventory);
         renderItemCounter(batch, inventory);
+        renderEventCounter(batch, eventsOccured);
         // Draw ui elements here
         renderPauseButton(batch, pauseRunner, playRunner);
         batch.end();
@@ -248,6 +249,24 @@ public class Gui {
         float boxHeight = layout.height + 2 * padding;
         float x = counterMargin;
         float y = viewport.getWorldHeight() - counterTop - boxHeight;
+
+        batch.setColor(Color.DARK_GRAY);
+        batch.draw(pixel, x - border, y - border, boxWidth + 2 * border, boxHeight + 2 * border);
+        batch.setColor(0.12f, 0.12f, 0.12f, 1f);
+        batch.draw(pixel, x, y, boxWidth, boxHeight);
+        batch.setColor(Color.WHITE);
+
+        font.draw(batch, text, x + padding, y + padding + layout.height);
+    }
+    public void renderEventCounter(SpriteBatch batch, int eventsOccured) {
+        String text = "Events: " + eventsOccured;
+        layout.setText(font, text);
+
+        float padding = 8f;
+        float boxWidth = layout.width + 2 * padding;
+        float boxHeight = layout.height + 2 * padding;
+        float x = counterMargin;
+        float y = viewport.getWorldHeight() - counterTop - boxHeight * 2;
 
         batch.setColor(Color.DARK_GRAY);
         batch.draw(pixel, x - border, y - border, boxWidth + 2 * border, boxHeight + 2 * border);

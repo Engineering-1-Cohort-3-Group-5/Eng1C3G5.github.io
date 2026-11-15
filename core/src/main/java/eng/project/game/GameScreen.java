@@ -55,6 +55,7 @@ public class GameScreen extends ScreenAdapter {
     private Play playRunnable = new Play();
     private float timeRemaining = 300f;
     private final Bus bus;
+    private int eventsOccured = 0;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
     public GameScreen(Main application, AssetManager assets) {
@@ -150,6 +151,7 @@ public class GameScreen extends ScreenAdapter {
                 // remain.
                 if (timeRemaining <= 180f) {
                     studentManager.generateStudents(delta);
+                    eventsOccured++;
                 }
 
                 foodManager.update(delta);
@@ -161,7 +163,9 @@ public class GameScreen extends ScreenAdapter {
                 }
                 fan.update(delta);
                 studentManager.update(delta);
-                mushroomManager.update(delta, player);
+                if (mushroomManager.update(delta, player)){
+                    eventsOccured++;
+                }
                 collisionHandler.resolveCollisions();
                 camera.update(
                     player.getX(),
@@ -207,10 +211,9 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
 
         timerGui.render(batch, timeRemaining);
-        gui.render(batch, inventory, player, pauser, playRunnable);
+        gui.render(batch, inventory, player, pauser, playRunnable,eventsOccured);
         gui.tutorialScreen();
     }
-
 
     /** Stops simulation updates while keeping the world visible. */
     public static void pauseGame() {
