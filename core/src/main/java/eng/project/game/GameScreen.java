@@ -154,20 +154,18 @@ public class GameScreen extends ScreenAdapter {
                 if (timeRemaining <= 180f) {
                     studentManager.generateStudents(delta);
                 }
+
                 foodManager.update(delta);
                 geeseManager.update(delta, player.getX(), player.getY(), foodManager, collisionHandler);
-
                 player.update(delta);
                 keycard.update(inventory);
                 if (bus.update(application)){
                     return true;
                 }
-
                 fan.update(delta);
                 studentManager.update(delta);
-
-                collisionHandler.resolveCollisions();
                 mushroomManager.update(delta, player);
+                collisionHandler.resolveCollisions();
                 camera.update(
                     player.getX(),
                     player.getY(),
