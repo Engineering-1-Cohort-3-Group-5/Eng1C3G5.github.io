@@ -54,7 +54,6 @@ public class GameScreen extends ScreenAdapter {
     private Pause pauser = new Pause();
     private Play playRunnable = new Play();
     private float timeRemaining = 300f;
-    private boolean studentEvent = false;
     private final Bus bus;
 
     /** Builds world systems from textures already loaded by {@link eng.project.Main}. */
@@ -70,8 +69,6 @@ public class GameScreen extends ScreenAdapter {
         keycard = new Keycard(new TextureRegion(assets.get("entity/keycard.png", Texture.class)), collisionHandler);
         player = new Player(new TextureRegion(assets.get("entity/player.png", Texture.class)), collisionHandler);
         foodManager = new FoodManager(new TextureRegion(assets.get("entity/food.png", Texture.class)));
-
-      //  foodManager = new FoodManager(new TextureRegion(assets.get("food.png", Texture.class)));
 
         mushroomManager = new MushroomManager(
             new TextureRegion(assets.get("mushroom.png", Texture.class)),
@@ -222,18 +219,9 @@ public class GameScreen extends ScreenAdapter {
         state = GameState.Pause;
     }
 
-    //gui.pauseButton(pauser);//{state = GameState.Pause;}
-
     /** Resumes simulation updates after {link #pauseGame()}. */
     public static void resumeGame() {
         state = GameState.Play;
-    }
-
-    //gui.playButton(playRunnable);//{state = GameState.Play;}
-
-    /** Returns whether the game simulation is currently paused. */
-    public boolean isPaused() {
-        return state == GameState.Pause;
     }
 
     @Override

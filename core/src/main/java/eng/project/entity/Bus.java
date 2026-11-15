@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import eng.project.Main;
 import eng.project.collisions.*;
-import eng.project.entity.Player;
 
 public class Bus {
     private final TextureRegion texture;

@@ -67,7 +67,7 @@ public class StudentManager {
 
     public void update(float delta) {
         /**
-         *Updates position of student on the map.
+         * Updates position of student on the map.
          */
 
         for (Student student : students) {

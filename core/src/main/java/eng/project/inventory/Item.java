@@ -12,7 +12,7 @@ public abstract class Item {
 
     public abstract boolean Use();
 
-    public abstract void Recharge();
+
     /* If an item is in Recharging state, this should be called periodically to make it usable*/
 
     public String getName() {

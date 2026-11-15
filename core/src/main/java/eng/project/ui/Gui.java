@@ -28,9 +28,6 @@ import eng.project.entity.Player;
 public class Gui {
     private final Texture buttonTexture = new Texture("pause.png");
     private final SpriteBatch tutorialBatch = new SpriteBatch();
-    private final GlyphLayout tutorialLayout = new GlyphLayout();
-    private final BitmapFont tutorialFont = new BitmapFont();
-    //public CameraController camera = new CameraController();
     private static final float slotSize = 64f;
     private static final float slotGap = 8f;
     private static final float border = 3f;
@@ -86,7 +83,6 @@ public class Gui {
         renderItemName(batch, inventory);
         renderItemCounter(batch, inventory);
         // Draw ui elements here
-        //buttonBatch.setProjectionMatrix(camera.getMatrix());
         renderPauseButton(batch, pauseRunner, playRunner);
         batch.end();
     }

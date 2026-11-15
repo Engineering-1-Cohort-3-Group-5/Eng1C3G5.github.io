@@ -44,13 +44,4 @@ public class Whistle extends Item{
         state = ItemState.Recharging;
         return false;
     }
-
-    @Override
-    public void Recharge(){
-        while (rechargeTime > 0){
-            rechargeTime -= 1;
-        }
-        rechargeTime = 10;
-        state = ItemState.Usable;
-    }
 }

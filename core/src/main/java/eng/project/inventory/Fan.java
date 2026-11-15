@@ -16,7 +16,6 @@ public class Fan extends Item{
     private CollisionHandler collisionHandler;
     private ColliderBody windBody;
     private Player player;
-    private ItemState state = ItemState.Usable;
     private final CameraController camera;
     private final TextureRegion windTexture;
     private float directionX;
@@ -27,7 +26,6 @@ public class Fan extends Item{
     private float pushStep;
     private final float speed = 6.0f; //wind collider speed in units per second
     private final float pushSpeed = 6.0f;
-    private float rechargeTime = 10;
 
     /** Creates a fan with an inventory icon and wind texture. */
     public Fan(CollisionHandler collisionHandler, Player player, CameraController camera, String name, TextureRegion icon, TextureRegion windTexture){
@@ -93,16 +91,16 @@ public class Fan extends Item{
             collisionHandler.remove(windBody);
             windBody = null;
         }
-        
+
     }
 
     /** Renders the wind blast texture at the wind collider position. */
     public void render(SpriteBatch batch){
         if (windBody == null){
             return;
-        }    
+        }
         float rotation = (float) Math.toDegrees(Math.atan2(directionY, directionX));
-    
+
         batch.draw(
             windTexture,
             windBody.getX() - 0.5f, windBody.getY() - 0.5f,
@@ -117,21 +115,12 @@ public class Fan extends Item{
     public void pushGoose(ColliderBody gooseBody){
         float dx = gooseBody.getX() - originX;
         float dy = gooseBody.getY() - originY;
-        float fowardDistance = dx * directionX + dy * directionY;
-        if (fowardDistance < 0f){
+        float forwardDistance = dx * directionX + dy * directionY;
+        if (forwardDistance < 0f){
             return;
         }
         gooseBody.push(
             directionX * pushStep,
             directionY * pushStep);
-    }
-
-    @Override
-    public void Recharge(){
-        while (rechargeTime > 0){
-            rechargeTime -= 1;
-        }
-        rechargeTime = 10;
-        state = ItemState.Usable;
     }
 }
