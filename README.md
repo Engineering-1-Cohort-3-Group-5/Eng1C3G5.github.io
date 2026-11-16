@@ -2,15 +2,15 @@
 
 ### PDF Documents
 
-2. [Requirements](Documentation/Req1.pdf)
+2: [Requirements](Documentation/Req1.pdf)
 
-3. [Architecture](Documentation/Arch1.pdf)
+3: [Architecture](Documentation/Arch1.pdf)
 
-4. [Planning](Documentation/Plan1.pdf)
+4: [Planning](Documentation/Plan1.pdf)
 
-5. [Risks](Documentation/Risk1.pdf)
+5: [Risks](Documentation/Risk1.pdf)
 
-6. [Implementation](Documentation/Impl1.pdf)
+6: [Implementation](Documentation/Impl1.pdf)
 
 ### Executable: [Jar File](Documentation/en1-goose-game-1.0.0.jar)
 
